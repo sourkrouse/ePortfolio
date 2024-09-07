@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/drawable/add.xml" value="0.1" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/drawable/check.xml" value="0.1025" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/drawable/delete.xml" value="0.1" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/drawable/editPencil.xml" value="0.1" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/drawable/edit_pencil.xml" value="0.1" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/drawable/settings.xml" value="0.1" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/layout/activity_add_daily_weight.xml" value="0.6691380908248378" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/layout/activity_main.xml" value="0.2916666666666667" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/layout/activity_register.xml" value="0.264" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/layout/activity_sms.xml" value="0.13052631578947368" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/layout/activity_weights.xml" value="0.23177083333333334" />
+        <entry key="..\:/Users/sourk/AndroidStudioProjects/WeightTracker/app/src/main/res/xml/preferences.xml" value="0.1" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

@@ -1,0 +1,22 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_theme"
+        android:title="@string/pref_title_theme"
+        android:summary="@string/pref_description_theme" />
+
+
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_sms"
+        android:title="@string/pref_title_sms_question" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_email"
+        android:title="@string/pref_title_email_question" />
+
+</PreferenceScreen>

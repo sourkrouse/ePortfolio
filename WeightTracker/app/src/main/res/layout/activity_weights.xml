@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WeightsActivity">
+
+    <TableLayout
+        android:id="@+id/dailyWeightGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+        <TableRow>
+            <TextView android:layout_span="2"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/name_message"
+                android:id="@+id/profile_name" />
+        </TableRow>
+        <TableRow>
+            <TextView android:layout_span="2"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/weights_title" />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="08/02/2022" />
+            <TextView
+                android:paddingLeft="20dp"
+                android:text="150" />
+             <ImageButton
+                android:id="@+id/imageButtonDelete3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/edit_pencil" />
+            <ImageButton
+                android:id="@+id/imageButtonEdit3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/delete" />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="08/01/2022" />
+            <TextView
+                android:paddingLeft="20dp"
+                android:text="151" />
+            <ImageButton
+                android:id="@+id/imageButtonDelete2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/edit_pencil" />
+            <ImageButton
+                android:id="@+id/imageButtonEdit2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/delete" />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="07/31/2022" />
+            <TextView
+                android:paddingLeft="20dp"
+                android:text="151" />
+            <ImageButton
+                android:id="@+id/imageButtonDelete1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/edit_pencil" />
+            <ImageButton
+                android:id="@+id/imageButtonEdit1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/delete" />
+        </TableRow>
+
+    </TableLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="addWeightClick"
+        app:layout_constraintBottom_toBottomOf="@+id/dailyWeightGrid"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_gravity="end|bottom"
+        android:padding="10dp"
+        app:srcCompat="@drawable/add" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
