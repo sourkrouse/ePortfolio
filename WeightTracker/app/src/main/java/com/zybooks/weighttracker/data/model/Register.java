@@ -1,23 +1,25 @@
-package com.zybooks.weighttracker;
+package com.zybooks.weighttracker.data.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.zybooks.weighttracker.data.DbConfig;
+
 // TODO - may need to add a phone number column later
-@Entity(tableName = "Registration")
+@Entity(tableName = DbConfig.REGISTER_TABLE)
 public class Register {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private long mId;
+    public int mId;
 
-    public void setId(long id) {
-        mId = id;
+    public void setId(int id) {
+        this.mId = id;
     }
 
-    public long getId() {
+    public int getId() {
         return mId;
     }
 
@@ -26,7 +28,7 @@ public class Register {
     private long mUpdateTime;
 
     public Register() {
-        mUpdateTime = System.currentTimeMillis();
+        this.mUpdateTime = System.currentTimeMillis();
     }
 
     public long getUpdateTime() {
@@ -34,7 +36,7 @@ public class Register {
     }
 
     public void setUpdateTime(long updateTime) {
-        mUpdateTime = updateTime;
+        this.mUpdateTime = updateTime;
     }
 
     // FIRST NAME FIELD
@@ -42,7 +44,7 @@ public class Register {
     public String mFirst;
 
     public void setFirst(String firstname) {
-        mFirst = firstname;
+        this.mFirst = firstname;
     }
 
     public String getFirst() {
@@ -54,7 +56,7 @@ public class Register {
     public String mLast;
 
     public void setLast(String lastname) {
-        mLast = lastname;
+        this.mLast = lastname;
     }
 
     public String getLast() {
@@ -66,7 +68,7 @@ public class Register {
     public String mEmail;
 
     public void setEmail(String email) {
-        mEmail = email;
+        this.mEmail = email;
     }
 
     public String getEmail() {
@@ -78,7 +80,7 @@ public class Register {
     public String mUsername;
 
     public void setUser(String username) {
-        mUsername = username;
+        this.mUsername = username;
     }
 
     public String getUser() {
@@ -90,7 +92,7 @@ public class Register {
     private String mPassword;
 
     public void setPassword(String password) {
-        mPassword = password;
+        this.mPassword = password;
     }
 
     public String getPassword() {

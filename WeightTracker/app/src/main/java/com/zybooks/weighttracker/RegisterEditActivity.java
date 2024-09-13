@@ -1,6 +1,5 @@
 package com.zybooks.weighttracker;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import com.zybooks.weighttracker.data.model.Register;
 
 public class RegisterEditActivity extends AppCompatActivity {
 
@@ -23,7 +24,7 @@ public class RegisterEditActivity extends AppCompatActivity {
 
 
     private WeightAndSeeDatabase mRegisterDb;
-    private long mRegisterId;
+    private int mRegisterId;
     private Register mRegister;
 
     @Override
@@ -31,18 +32,18 @@ public class RegisterEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_edit);
 
-
-        mUserField = findViewById(R.id.editTextUserName);
-        mPwdField = findViewById(R.id.editTextPassword);
         mFirstField = findViewById(R.id.editTextFirstname);
         mLastField = findViewById(R.id.editTextLastname);
         mEmailField = findViewById(R.id.editTextEmailAddress);
+        mUserField = findViewById(R.id.editTextUserName);
+        mPwdField = findViewById(R.id.editTextPassword);
+
 
         mRegisterDb = WeightAndSeeDatabase.getInstance(getApplicationContext());
 
         // Get profile ID from RegisterActivity
         Intent intent = getIntent();
-        mRegisterId = intent.getLongExtra(EXTRA_PROFILE_ID, -1);
+        mRegisterId = intent.getIntExtra(EXTRA_PROFILE_ID, -1);
 
         //TODO - add action bar
         //ActionBar actionBar = getSupportActionBar();

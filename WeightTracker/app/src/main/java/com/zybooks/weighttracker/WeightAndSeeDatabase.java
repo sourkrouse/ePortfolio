@@ -5,6 +5,9 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.zybooks.weighttracker.data.DAO.RegisterDao;
+import com.zybooks.weighttracker.data.model.Register;
+
 // TODO add Weights.class between brackets
 @Database(entities = {Register.class, Weights.class}, version = 1)
 public abstract class WeightAndSeeDatabase extends RoomDatabase {

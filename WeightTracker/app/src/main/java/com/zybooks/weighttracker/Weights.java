@@ -1,12 +1,13 @@
 package com.zybooks.weighttracker;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
+
+import com.zybooks.weighttracker.data.model.Register;
 
 import java.util.Date;
 

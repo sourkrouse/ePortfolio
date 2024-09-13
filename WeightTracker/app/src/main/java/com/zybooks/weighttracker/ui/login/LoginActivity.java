@@ -23,14 +23,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zybooks.weighttracker.MainActivity;
 import com.zybooks.weighttracker.R;
-import com.zybooks.weighttracker.Register;
+import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.RegisterActivity;
 import com.zybooks.weighttracker.WeightAndSeeDatabase;
 import com.zybooks.weighttracker.WeightsActivity;
-import com.zybooks.weighttracker.ui.login.LoginViewModel;
-import com.zybooks.weighttracker.ui.login.LoginViewModelFactory;
 import com.zybooks.weighttracker.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
