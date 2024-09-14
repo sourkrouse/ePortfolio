@@ -10,4 +10,6 @@ These repositories will be built out to display my work in a more organized fash
 
 <a href="https://github.com/sourkrouse/ePortfolio/tree/master/WeightTracker">GO TO Weight Tracker Code</a>
 
+<a href="https://youtu.be/YTIxfNiG-sw" target="_blank">GO TO Code Review Video</a>
+
 
