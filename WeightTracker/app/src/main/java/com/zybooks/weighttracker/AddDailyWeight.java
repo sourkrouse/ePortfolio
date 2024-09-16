@@ -9,8 +9,9 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 
+import com.zybooks.weighttracker.data.model.Weights;
+
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

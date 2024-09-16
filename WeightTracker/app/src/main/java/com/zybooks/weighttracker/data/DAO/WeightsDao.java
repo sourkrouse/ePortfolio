@@ -1,4 +1,4 @@
-package com.zybooks.weighttracker;
+package com.zybooks.weighttracker.data.DAO;
 
         import androidx.room.Dao;
         import androidx.room.Delete;
@@ -6,6 +6,10 @@ package com.zybooks.weighttracker;
         import androidx.room.OnConflictStrategy;
         import androidx.room.Query;
         import androidx.room.Update;
+
+        import com.zybooks.weighttracker.data.model.Weights;
+        import com.zybooks.weighttracker.data.DbConfig;
+
         import java.util.List;
 
 

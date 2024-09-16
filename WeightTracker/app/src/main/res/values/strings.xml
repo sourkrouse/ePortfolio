@@ -23,7 +23,9 @@
     <string name="prompt_weight">"Enter Weight"</string>
     <string name="prompt_date">"Enter Date"</string>
     <string name="new_weight_save">"Save Weight"</string>
-    <string name="name_message">, see your progress.</string>
+    <string name="name_message">see your progress.</string>
+
+    <string name="add_daily_weight">Add a New Weight</string>
 
     <string name="settings">Settings</string>
     <string name="pref_title_theme">Dark theme</string>

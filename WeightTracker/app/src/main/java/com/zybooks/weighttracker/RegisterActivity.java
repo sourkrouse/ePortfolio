@@ -1,6 +1,7 @@
 package com.zybooks.weighttracker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.AppDatabase;
 import com.zybooks.weighttracker.data.DbConfig;
@@ -27,14 +29,18 @@ import com.zybooks.weighttracker.ui.login.LoginActivity;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
+    //public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private WeightAndSeeDatabase mRegisterDb;
+    //private WeightAndSeeDatabase mRegisterDb;
 
-    private List<Register> mProfileList;
+    Button button;
+    CoordinatorLayout layout;
+
     private EditText mUserField;
     private EditText mPwdField;
     private EditText mFirstField;
@@ -43,16 +49,23 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mRegisterButton;
     private TextView mSuccessText;
     private int mCurrentProfileIndex;
-    private final int REQUEST_CODE_NEW_PROFILE = 0;
-    private final int REQUEST_CODE_UPDATE_PROFILE = 1;
-    private Register mProfile;
+    //private final int REQUEST_CODE_NEW_PROFILE = 0;
+    //private final int REQUEST_CODE_UPDATE_PROFILE = 1;
+    //private Register mProfile;
     private RegisterDao registerDao;
-    private Register mDeletedProfile;
+    //private Register mDeletedProfile;
     private boolean mDarkTheme;
     private SharedPreferences mSharedPrefs;
 
-    private int mID;
+    //private int mID;
 
+    /*
+    MAIN THREAD
+    Arguments - passes in the instance of the user record (in this case the ID)
+    Calls - preferences check, pulls theme of front end, initialize database,
+    set user field variable connections to the form field IDs, button click listener
+    Summary - runs at the time of screen load and manages all other method/class calls
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -61,12 +74,14 @@ public class RegisterActivity extends AppCompatActivity {
             setTheme(R.style.DarkTheme);
         }
 
+        // pulls XML file for front end design, checks for data being passed through instance argument
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
         // Initialize the RegisterDao
         registerDao = InitDb.appDatabase.registerDao();
 
+        // sets variables of user fields by connecting to ID of UI/UX field
         mUserField = findViewById(R.id.editTextUserName);
         mPwdField = findViewById(R.id.editTextPassword);
         mFirstField = findViewById(R.id.editTextFirstname);
@@ -74,46 +89,19 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailField = findViewById(R.id.editTextEmailAddress);
         mRegisterButton = findViewById(R.id.buttonRegisterSubmit);
 
-        //mRegisterDb = WeightAndSeeDatabase.getInstance(getApplicationContext());
-
 
         // Set onClickListener for the login button
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertTestUser();
+                insertUser();
                 submitNewRegisterButtonClick();
             }
         });
 
-        //insert a test user
-        insertTestUser();
-
-        // Get profile ID from Register
-        /*
-        Intent intent = getIntent();
-        mID = (int) intent.getLongExtra(EXTRA_PROFILE_ID, -1);
-        if (mID == -1) {
-            // Add new profile
-            mProfile = new Register();
-            //TODO - set title in action bar
-            //setTitle(R.string.add_question);
-        }
-        else {
-            // get existing profile
-            mProfile = mRegisterDb.registerDao().getProfile(mID);
-            //mAnswerText.setText(mQuestion.getAnswer());
-
-            mUserField.setText(mProfile.getUser().toString());
-            mPwdField.setText(mProfile.getPassword().toString());
-            mFirstField.setText(mProfile.getFirst().toString());
-            mLastField.setText(mProfile.getLast().toString());
-            mEmailField.setText(mProfile.getEmail().toString());
 
 
-        }
 
-         */
 
     }
     @Override
@@ -132,18 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
         //mRecyclerView.setAdapter(mSubjectAdapter);
     }
 
-    /*
-    private List<Register> loadWeights() {
-        String order = mSharedPrefs.getString(SettingsFragment.PREFERENCE_SUBJECT_ORDER, "1");
-        // TODO options will be how to order weights
-        switch (Integer.parseInt(order)) {
-            case 0: return mRegisterDb.weightDao().getWeights();
-            case 1: return mRegisterDb.weightDao.getWeightsNewerFirst();
-            default: return mRegisterDb.weightDao.getWeightsOlderFirst();
-        }
 
-    }
-    */
 
     public void submitNewRegisterButtonClick(){
         // TODO temporarily go to weights page without registration action
@@ -186,35 +163,13 @@ public class RegisterActivity extends AppCompatActivity {
                 });
             }
         });
-        /*
-        if (mID == -1) {
-            // New profile
-            mRegisterDb.registerDao().insertProfile(mProfile);
-
-        } else {
-            // Existing profile
-            mRegisterDb.registerDao().updateProfile(mProfile);
-            // TODO - send message
-
-        }
-        */
-        // Send back profile ID
-        // TODO - THIS IS NOT WORKING
-
-        /*
-        Intent intent = new Intent();
-        Log.d("IDTAG",String.valueOf(mProfile.getId()));
-        Log.d("NAMETAG",String.valueOf(mProfile.getLast()));
-        startActivity(new Intent(this, WeightsActivity.class));
-        intent.putExtra(WeightsActivity.EXTRA_PROFILE_ID, mProfile.getId());
-        setResult(RESULT_OK, intent);
-        */
-
-        //finish();
 
 
     }
-    private void insertTestUser() {
+
+    private void insertUser() {
+
+        // TODO: check for existing profile before inserting new record
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -225,6 +180,17 @@ public class RegisterActivity extends AppCompatActivity {
                 String lastname = mLastField.getText().toString().trim();
                 String email_txt = mEmailField.getText().toString().trim();
 
+
+                if(!AuthenticateUser.checkStringLength(username,25)
+                        && !AuthenticateUser.checkStringLength(firstname,50)
+                        && !AuthenticateUser.checkStringLength(lastname,50)
+                        && !AuthenticateUser.checkEmail(email_txt)
+                        && !AuthenticateUser.checkPassword(password)
+                ){
+                    //TODO: add message when credentials fail
+                }
+
+                // check if username exists before inserting a new record
                 if (registerDao.getProfileByUsername(username) == null) {
                     // Insert the test user
                     Register registerUser = new Register();
@@ -235,6 +201,10 @@ public class RegisterActivity extends AppCompatActivity {
                     registerUser.setEmail(email_txt);
 
                     registerDao.insertProfile(registerUser);
+                } else {
+
+                    //TODO: not working when trying to pull on same activity
+                    errorDuplicateUser();
                 }
 
                 // Check if the test user 'admin' already exists in the db
@@ -261,7 +231,6 @@ public class RegisterActivity extends AppCompatActivity {
         //Log.d("IDTAG",String.valueOf(mProfile.getId()));
         //Log.d("NAMETAG",String.valueOf(mProfile.getLast()));
         Intent intent = new Intent(RegisterActivity.this, WeightsActivity.class);
-        //startActivity(new Intent(RegisterActivity.this, WeightsActivity.class));
         intent.putExtra(WeightsActivity.EXTRA_PROFILE_ID, newID);
         startActivity(intent);
         setResult(RESULT_OK, intent);
@@ -271,11 +240,20 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(new Intent(RegisterActivity.this, WeightsActivity.class));
         //finish();
     }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.register_menu, menu);
         return true;
+    }
+
+    public void errorDuplicateUser(){
+        //Toast.makeText(this, "This username already exists", Toast.LENGTH_SHORT).show();
+
+        Snackbar snackbarDuplicate = Snackbar.make(layout, "This username already exists", Snackbar.LENGTH_SHORT);
+        snackbarDuplicate.show();
     }
 
     @Override
@@ -291,6 +269,10 @@ public class RegisterActivity extends AppCompatActivity {
                 intent = new Intent(RegisterActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.add_daily_weight:
+                intent = new Intent(this, AddDailyWeight.class);
+                startActivity(intent);
+                //TODO: add case for add new weight
             default:
                 return super.onOptionsItemSelected(item);
         }

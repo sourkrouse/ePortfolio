@@ -1,4 +1,4 @@
-package com.zybooks.weighttracker;
+package com.zybooks.weighttracker.data.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -6,8 +6,6 @@ import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
-
-import com.zybooks.weighttracker.data.model.Register;
 
 import java.util.Date;
 
@@ -29,6 +27,8 @@ public class Weights {
     public long getWId() {
         return mWId;
     }
+
+    // Foreign key connected to Register ID of the user
     @ColumnInfo(name = "Rid")
     private long mRId;
 
