@@ -19,28 +19,37 @@
         <activity
             android:name=".SMSActivity"
             android:exported="false"
+            android:launchMode="singleTop"
             android:parentActivityName=".WeightsActivity"/>
         <activity
             android:name=".RegisterEditActivity"
             android:exported="false"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.login.LoginActivity" />
         <activity
             android:name=".AddDailyWeight"
             android:exported="false"
-            android:parentActivityName=".WeightsActivity" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/settings"
+            android:launchMode="singleTop"
             android:parentActivityName=".WeightsActivity" />
         <activity
             android:name=".WeightsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.login.LoginActivity" />
+            android:launchMode="singleTop"
+            android:parentActivityName=".AddDailyWeight" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings"
+            android:launchMode="singleTop"
+            android:parentActivityName=".WeightsActivity" />
+
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".MainActivity" />
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"
+
+            />
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
@@ -54,6 +63,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
     </application>
 

@@ -15,7 +15,17 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+/*
+Last Updated 9/17/2024, Laura Brooks
+PAGE DISPLAYS - weight and date text fields and button to add
 
+UPDATES INCLUDE:
+1) Changed colors to a softer green
+2) Added the special back button to go back to the home page
+3) Updated the header so it only displays the title and settings button
+4) Adjusted manifest file to ensure all pages have an intended direction
+TODO Items line 62,192,205
+ */
 public class AddDailyWeight extends AppCompatActivity {
 
     public static final String EXTRA_WEIGHT_ID = "com.zybooks.studyhelper.weights_Wid";

@@ -1,5 +1,6 @@
 package com.zybooks.weighttracker;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
@@ -20,6 +23,23 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/*
+Last Updated 9/18/2024, Laura Brooks
+Page Argument is a Bundle storing the user details. The user ID is then used
+to query the database for the user name.
+PAGE DISPLAYS - active users name at the top of the page. Placeholders for
+weights entered by date.
+
+UPDATES INCLUDE:
+1) Changed colors to a softer green
+2) Added the special back button to go back to the home page
+3) Updated the header so it displays the title, SMS opt out, and settings button
+4) Adjusted manifest file to ensure all pages have an intended direction
+5) Add new weight floating button at the bottom of the screen that connects to
+add new weight screen.
+6) Started functions to get weights from user ID (in progress)
+7) TODO Items line 45,91,95,111,130
+ */
 public class WeightsActivity extends AppCompatActivity {
 
     // TODO - cannot get the register ID to pass from the registration page
@@ -45,14 +65,14 @@ public class WeightsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weights);
 
-        savedInstanceState = getIntent().getExtras();
-        // Get profile ID from RegisterActivity
-        //Intent intent = getIntent();
-        mRId = savedInstanceState.getInt(EXTRA_PROFILE_ID, -1);
+        // custom back arrow in the action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //final Register register = registerDao.getProfile(mRId);
-        //mNameField = findViewById(R.id.profile_name);
-        //mRegisterDb = WeightAndSeeDatabase.getInstance(getApplicationContext());
+        // Get profile ID from the passed Bundle
+        savedInstanceState = getIntent().getExtras();
+        mRId = savedInstanceState.getInt(EXTRA_PROFILE_ID, -1);
 
         // Initialize the RegisterDao
         registerDao = InitDb.appDatabase.registerDao();
@@ -88,8 +108,8 @@ public class WeightsActivity extends AppCompatActivity {
                                 textView.setText(dFirst + ' ' + dLast); //set text for text view
                                 //mNameField.setText(dFirst + ' ' + dLast);
 
-                                //TODO - for action bar
-                                //setTitle(R.string.mNameField);
+                                //TODO - for action bar, trying to add name to action bar
+                                actionBar.setTitle(dFirst + ' ' + dLast);
 
                             }
                             //finish();
@@ -107,7 +127,7 @@ public class WeightsActivity extends AppCompatActivity {
     /*
     private List<Register> loadWeights() {
         String order = mSharedPrefs.getString(SettingsFragment.PREFERENCE_SUBJECT_ORDER, "1");
-        // TODO options will be how to order weights
+        // TODO options will be how to order weights - desc, asc
         switch (Integer.parseInt(order)) {
             case 0: return mRegisterDb.weightDao().getWeights();
             case 1: return mRegisterDb.weightDao.getWeightsNewerFirst();
@@ -127,8 +147,6 @@ public class WeightsActivity extends AppCompatActivity {
  */
     }
 
-
-
     public void addWeightClick(View view){
         newWeightScreen();
     }
@@ -143,8 +161,16 @@ public class WeightsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.register_menu, menu);
+        getMenuInflater().inflate(R.menu.weights_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_closed);
+        Spinner spinner = (Spinner) item.getActionView();
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.spinner_list_item_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
         return true;
     }
 
@@ -160,6 +186,11 @@ public class WeightsActivity extends AppCompatActivity {
             case R.id.settings:
                 intent = new Intent(WeightsActivity.this, SettingsActivity.class);
                 startActivity(intent);
+                return true;
+            case android.R.id.home:
+                //intent = new Intent(WeightsActivity.this, MainActivity.class);
+                //startActivity(intent);
+                finish(); // returns the user to parent page
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

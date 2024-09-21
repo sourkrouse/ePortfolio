@@ -97,16 +97,6 @@
         app:layout_constraintEnd_toEndOf="@+id/editTextPassword"
         app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DUPLICATE USER"
-        android:id="@+id/button"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        app:layout_constraintEnd_toEndOf="@+id/buttonRegisterSubmit"
-        app:layout_constraintTop_toBottomOf="@+id/buttonRegisterSubmit" />
 
-    // remove from button
-    ////android:onClick="submitNewRegisterButtonClick"
+
 </androidx.constraintlayout.widget.ConstraintLayout>

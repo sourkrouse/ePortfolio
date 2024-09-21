@@ -24,6 +24,7 @@
     <string name="prompt_date">"Enter Date"</string>
     <string name="new_weight_save">"Save Weight"</string>
     <string name="name_message">see your progress.</string>
+    <string name="menu_closed">Menu</string>
 
     <string name="add_daily_weight">Add a New Weight</string>
 

@@ -1,45 +1,54 @@
 package com.zybooks.weighttracker;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.zybooks.weighttracker.data.model.Register;
-import com.zybooks.weighttracker.data.AppDatabase;
-import com.zybooks.weighttracker.data.DbConfig;
 import com.zybooks.weighttracker.data.InitDb;
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
-import com.zybooks.weighttracker.ui.login.LoginActivity;
 
-import java.util.List;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+/*
+Last Updated 9/18/2024, Laura Brooks
+PAGE DISPLAYS - first,last,email,username,password text fields
+and button to add new account
+
+UPDATES INCLUDE:
+1) Changed colors to a softer green
+2) Changed the color of the text labels
+3) Added the special back button to go back to the home page
+4) Updated the header so it displays the title, back button, and settings button
+5) Adjusted manifest file to ensure all pages have an intended direction
+TODO Items line 62,192,205
+ */
 
 public class RegisterActivity extends AppCompatActivity {
 
     //public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    //private WeightAndSeeDatabase mRegisterDb;
 
-    Button button;
-    CoordinatorLayout layout;
 
     private EditText mUserField;
     private EditText mPwdField;
@@ -49,15 +58,10 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mRegisterButton;
     private TextView mSuccessText;
     private int mCurrentProfileIndex;
-    //private final int REQUEST_CODE_NEW_PROFILE = 0;
-    //private final int REQUEST_CODE_UPDATE_PROFILE = 1;
-    //private Register mProfile;
     private RegisterDao registerDao;
-    //private Register mDeletedProfile;
     private boolean mDarkTheme;
     private SharedPreferences mSharedPrefs;
 
-    //private int mID;
 
     /*
     MAIN THREAD
@@ -77,6 +81,15 @@ public class RegisterActivity extends AppCompatActivity {
         // pulls XML file for front end design, checks for data being passed through instance argument
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        // calling the action bar
+        ActionBar actionBar = getSupportActionBar();
+
+        // Customize the back button
+        actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+
+        // showing the custom back button in action bar
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Initialize the RegisterDao
         registerDao = InitDb.appDatabase.registerDao();
@@ -123,13 +136,9 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     public void submitNewRegisterButtonClick(){
-        // TODO temporarily go to weights page without registration action
-        //goToWeights();
+
         String username = mUserField.getText().toString().trim();
         String password = mPwdField.getText().toString().trim();
-        //String firstname = mFirstField.getText().toString().trim();
-        //String lastname = mLastField.getText().toString().trim();
-        //String email_txt = mEmailField.getText().toString().trim();
 
         if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
             Toast.makeText(this, "Please enter login credentials", Toast.LENGTH_SHORT).show();
@@ -157,7 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
                         } else {
                             // Invalid login credentials
                             Log.d("LOGINERROR","Invalid Login");
-                            //Toast.makeText(LoginActivity.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -188,6 +197,7 @@ public class RegisterActivity extends AppCompatActivity {
                         && !AuthenticateUser.checkPassword(password)
                 ){
                     //TODO: add message when credentials fail
+                    errorDuplicateUser();
                 }
 
                 // check if username exists before inserting a new record
@@ -235,29 +245,46 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(intent);
         setResult(RESULT_OK, intent);
     }
-    private void goToWeights() {
-        //Intent intent = new Intent(this, RegisterActivity.class);
-        startActivity(new Intent(RegisterActivity.this, WeightsActivity.class));
-        //finish();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.register_menu, menu);
-        return true;
-    }
-
     public void errorDuplicateUser(){
         //Toast.makeText(this, "This username already exists", Toast.LENGTH_SHORT).show();
 
-        Snackbar snackbarDuplicate = Snackbar.make(layout, "This username already exists", Snackbar.LENGTH_SHORT);
-        snackbarDuplicate.show();
+       // InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        //imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+        Snackbar snackbar = Snackbar
+                .make(findViewById(android.R.id.content), "Incorrect!!", Snackbar.LENGTH_LONG)
+                .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    }
+                });
+        snackbar.setActionTextColor(Color.RED);
+
+        snackbar.show();
+
+
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.spinner_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_closed);
+        Spinner spinner = (Spinner) item.getActionView();
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.spinner_list_item_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+        return true;
+
+
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.sms_preference:
@@ -269,10 +296,11 @@ public class RegisterActivity extends AppCompatActivity {
                 intent = new Intent(RegisterActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.add_daily_weight:
-                intent = new Intent(this, AddDailyWeight.class);
+            case android.R.id.home:
+                intent = new Intent(RegisterActivity.this, MainActivity.class);
                 startActivity(intent);
-                //TODO: add case for add new weight
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

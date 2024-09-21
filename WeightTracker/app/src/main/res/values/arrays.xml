@@ -5,6 +5,12 @@
         <item>Reply to all</item>
     </string-array>
 
+    <string-array name="spinner_list_item_array">
+        <item></item>
+        <item>Page 1</item>
+        <item>Page 2</item>
+    </string-array>
+
     <string-array name="reply_values">
         <item>reply</item>
         <item>reply_all</item>
