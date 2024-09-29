@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -15,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
+import com.zybooks.weighttracker.data.DAO.WeightsDao;
 import com.zybooks.weighttracker.data.InitDb;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.model.Weights;
@@ -38,22 +38,13 @@ UPDATES INCLUDE:
 5) Add new weight floating button at the bottom of the screen that connects to
 add new weight screen.
 6) Started functions to get weights from user ID (in progress)
-7) TODO Items line 45,91,95,111,130
+7) TODO Items line 91,95,111,130
  */
 public class WeightsActivity extends AppCompatActivity {
 
-    // TODO - cannot get the register ID to pass from the registration page
     public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private WeightAndSeeDatabase mRegisterDb;
-    private WeightAndSeeDatabase mWeightsDb;
 
-    private TextView mNameField;
-    private TextView mWeightAmt;
-    private TextView mWeightDate;
-    private Weights mWeights;
-
-    private Register mRegister;
     private RegisterDao registerDao;
 
     private List<Weights> mWeightList;
@@ -65,11 +56,6 @@ public class WeightsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weights);
 
-        // custom back arrow in the action bar
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
         // Get profile ID from the passed Bundle
         savedInstanceState = getIntent().getExtras();
         mRId = savedInstanceState.getInt(EXTRA_PROFILE_ID, -1);
@@ -77,51 +63,13 @@ public class WeightsActivity extends AppCompatActivity {
         // Initialize the RegisterDao
         registerDao = InitDb.appDatabase.registerDao();
 
-        // Execute the database query on a background thread
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                final Register register = registerDao.getProfile(mRId);
-                Log.d("REGISTNAME",register.getFirst());
-                // Handle the result on the main thread
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (register != null) {
-                            // TODO: need password check -  && password.equals(register.getPassword())
+        // get the display name with the passed user ID
+        getDisplayName(mRId);
 
-                            // Successful login, navigate to the main activity
-                            if (mRId == -1) {
-                                // TODO - setting the register ID to an existing ID for testing.
-                                //mRegister = new Register();
-                                mRId = 5;
-                                mNameField.setText("Name not Found");
-
-
-                            } else {
-
-                                // set name field to display name at top
-                                String dFirst = register.getFirst();
-                                String dLast = register.getLast();
-                                Log.d("REGISTNAME",dFirst + ' ' + dLast);
-                                TextView textView = (TextView)findViewById(R.id.profile_name);
-                                textView.setText(dFirst + ' ' + dLast); //set text for text view
-                                //mNameField.setText(dFirst + ' ' + dLast);
-
-                                //TODO - for action bar, trying to add name to action bar
-                                actionBar.setTitle(dFirst + ' ' + dLast);
-
-                            }
-                            //finish();
-                        } else {
-                            // Invalid login credentials
-                            Log.d("LOGINERROR","Invalid Login");
-                            //Toast.makeText(LoginActivity.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
+        // custom back arrow in the action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
 
     /*
@@ -137,14 +85,54 @@ public class WeightsActivity extends AppCompatActivity {
     }
     */
 
+    }
 
-/*
-        // Display the fragment as the main content
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new DailyWeightFragment())
-                .commit();
+    private void getDisplayName(int userID){
+        // Execute the database query on a background thread
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                final Register register = registerDao.getProfile(userID);
+                //final List<Weights> weights = weightsDao.getWeightsNewerFirst(mRId);
+                Log.d("REGISTNAME",register.getFirst());
+                // Handle the result on the main thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (register != null) {
+                            // TODO: need password check -  && password.equals(register.getPassword())
 
- */
+                            // Successful login, navigate to the main activity
+                            if (userID == -1) {
+                                // TODO - setting the register ID to an existing ID for testing.
+                                TextView textView = (TextView)findViewById(R.id.profile_name);
+                                textView.setText("NAME NOTE FOUND!"); //set text for text view
+
+
+                            } else {
+
+                                // set name field to display name at top
+                                String dFirst = register.getFirst();
+                                String dLast = register.getLast();
+                                Log.d("REGISTNAME",dFirst + ' ' + dLast);
+                                TextView textView = (TextView)findViewById(R.id.profile_name);
+                                textView.setText(dFirst + ' ' + dLast); //set text for text view
+                                //mNameField.setText(dFirst + ' ' + dLast);
+
+                                //TODO - for action bar, trying to add name to action bar
+                                //actionBar.setTitle(dFirst + ' ' + dLast);
+
+                            }
+                            //finish();
+                        } else {
+                            // Invalid login credentials
+                            Log.d("LOGINERROR","Invalid Login");
+                            //Toast.makeText(LoginActivity.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void addWeightClick(View view){
@@ -152,11 +140,11 @@ public class WeightsActivity extends AppCompatActivity {
     }
 
     private void newWeightScreen() {
-        Intent intent = new Intent();
 
-        intent.putExtra(AddDailyWeight.EXTRA_PROFILE_ID, mRId);
-        startActivity(new Intent(WeightsActivity.this, AddDailyWeight.class));
-        finish();
+        Intent intent = new Intent(WeightsActivity.this, AddDailyWeight.class);
+        intent.putExtra(WeightsActivity.EXTRA_PROFILE_ID, mRId);
+        startActivity(intent);
+        setResult(RESULT_OK, intent);
     }
 
     @Override

@@ -7,9 +7,11 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
+import com.zybooks.weighttracker.data.DbConfig;
+
 import java.util.Date;
 
-@Entity(tableName = "DailyWeights",
+@Entity(tableName = DbConfig.WEIGHTS_TABLE,
         foreignKeys = @ForeignKey(entity = Register.class,
                 parentColumns = "id",
                 childColumns = "Rid"))
@@ -18,25 +20,25 @@ public class Weights {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "Wid")
-    private long mWId;
+    private int mWId;
 
-    public void setWId(long Wid) {
+    public void setWId(int Wid) {
         mWId = Wid;
     }
 
-    public long getWId() {
+    public int getWId() {
         return mWId;
     }
 
     // Foreign key connected to Register ID of the user
     @ColumnInfo(name = "Rid")
-    private long mRId;
+    private int mRId;
 
-    public void setRId(long Rid) {
+    public void setRId(int Rid) {
         mRId = Rid;
     }
 
-    public long getRId() {
+    public int getRId() {
         return mRId;
     }
 

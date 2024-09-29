@@ -1,6 +1,7 @@
 package com.zybooks.weighttracker.data;
 
 import com.zybooks.weighttracker.data.model.LoggedInUser;
+import com.zybooks.weighttracker.data.model.Register;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -16,8 +17,13 @@ public class LoginRepository {
     // @see https://developer.android.com/training/articles/keystore
     private LoggedInUser user = null;
 
+
+
+
     // private constructor : singleton access
     private LoginRepository(LoginDataSource dataSource) {
+
+
         this.dataSource = dataSource;
     }
 

@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zybooks.weighttracker.AuthenticateUser;
 import com.zybooks.weighttracker.MainActivity;
 import com.zybooks.weighttracker.R;
 import com.zybooks.weighttracker.SMSActivity;
@@ -46,7 +47,7 @@ import com.zybooks.weighttracker.databinding.ActivityLoginBinding;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 /*
-Last Updated 9/18/2024, Laura Brooks
+Last Updated 9/29/2024, Laura Brooks
 PAGE DISPLAYS - username/password text fields and button to login
 
 UPDATES INCLUDE:
@@ -55,16 +56,17 @@ UPDATES INCLUDE:
 3) Updated the header so it only displays the title and settings button
 4) Adjusted manifest file to ensure all pages have an intended direction
 5) Started functions to get user ID from login entered (in progress)
-6) TODO Items line 62,192,205
+6) Getting userID and password entered from user, running through DB code on
+    view model, not returning a userID yet
+** TODO Items line 192,205
  */
 public class LoginActivity extends AppCompatActivity {
 
-    // TODO prepare variables for database lookup
     public static final String EXTRA_PROFILE_ID = "com.zybooks.studyhelper.register_id";
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     private WeightAndSeeDatabase mRegisterDb;
-    private Register mRegister;
-    private RegisterDao registerDao;
+    //private Register mRegister;
+
     private int mRId = -1;
 
     private LoginViewModel loginViewModel;
@@ -87,28 +89,27 @@ public class LoginActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        // connecting the view to fields
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // initializing the View Model where there main DB work is done
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        // Initialize the RegisterDao
-        registerDao = InitDb.appDatabase.registerDao();
-
-        mRegisterDb = WeightAndSeeDatabase.getInstance(getApplicationContext());
 
         savedInstanceState = getIntent().getExtras();
         // Get profile ID from argument passed
         if (savedInstanceState != null)
             mRId = savedInstanceState.getInt(EXTRA_PROFILE_ID, -1);
 
-
+        // get user entry from input fields
         final EditText usernameEditText = binding.username;
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
 
+        // running methods from view model to get state of the user entry
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
             public void onChanged(@Nullable LoginFormState loginFormState) {
@@ -124,8 +125,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(@Nullable LoginResult loginResult) {
@@ -177,32 +176,37 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // on button click, get the userID of the logged in user, if found (using view model)
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
+                mRId = loginViewModel.login(usernameEditText.getText().toString(),passwordEditText.getText().toString());
             }
         });
     }
+
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-        startActivity(new Intent(LoginActivity.this, WeightsActivity.class));
+        //startActivity(new Intent(LoginActivity.this, WeightsActivity.class));
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
+    // button click action, sends user ID to next screen action
     public void loginButtonClick(View view){
-        weightsScreen(5);
+
+        weightsScreen(mRId);
     }
 
-    // TODO login screen currently goes directly to the weights list. Database lookup to be added later.
+    // TODO login screen errors before going to the next screen
     private void weightsScreen(int userID) {
         Intent intent = new Intent(LoginActivity.this, WeightsActivity.class);
         intent.putExtra(WeightsActivity.EXTRA_PROFILE_ID, userID);
@@ -212,6 +216,7 @@ public class LoginActivity extends AppCompatActivity {
         //startActivity(new Intent(LoginActivity.this, WeightsActivity.class));
         //finish();
     }
+    // move to registration screen
     public void newRegisterButtonClick(View view){
         newRegister();
     }

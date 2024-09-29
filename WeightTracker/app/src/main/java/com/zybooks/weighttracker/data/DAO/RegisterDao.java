@@ -25,6 +25,9 @@ public interface RegisterDao {
     @Query("SELECT * FROM "+ DbConfig.REGISTER_TABLE+ " WHERE username = :uname")
     public List<Register> getProfiles(String uname);
 
+    @Query("SELECT * FROM "+ DbConfig.REGISTER_TABLE+ " WHERE username = :uname AND password = :pwd")
+    public Register getUser(String uname, String pwd);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long insertProfile(Register register);
 

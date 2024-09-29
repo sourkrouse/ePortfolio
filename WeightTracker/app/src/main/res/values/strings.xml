@@ -19,13 +19,13 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="login_success">Login Successful!</string>
     <string name="weights_title">"Current Weight List"</string>
     <string name="prompt_weight">"Enter Weight"</string>
     <string name="prompt_date">"Enter Date"</string>
     <string name="new_weight_save">"Save Weight"</string>
     <string name="name_message">see your progress.</string>
     <string name="menu_closed">Menu</string>
-
     <string name="add_daily_weight">Add a New Weight</string>
 
     <string name="settings">Settings</string>
