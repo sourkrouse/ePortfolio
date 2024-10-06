@@ -1,5 +1,6 @@
 package com.zybooks.weighttracker.data.DAO;
 
+        import androidx.lifecycle.LiveData;
         import androidx.room.Dao;
         import androidx.room.Delete;
         import androidx.room.Insert;
@@ -12,6 +13,15 @@ package com.zybooks.weighttracker.data.DAO;
 
         import java.util.List;
 
+        /*
+Last Updated 10/6/2024, Laura Brooks
+This file is a Database Access Object which sets all the queries used in the app to get
+data from the SQL Server.
+
+Only the queries to insert a new weight and get a list of weights are being used.
+
+
+ */
 
 @Dao
 public interface WeightsDao {
@@ -23,6 +33,7 @@ public interface WeightsDao {
     //public List<Weights> getWeights();
 
     @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Rid = :id ORDER BY record_date DESC")
+    //public LiveData<List<String>> getWeightsNewerFirst(int id);
     public List<Weights> getWeightsNewerFirst(int id);
 
    // @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " ORDER BY record_date ASC")

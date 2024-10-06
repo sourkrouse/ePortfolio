@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /*
-Last Updated 9/29/2024, Laura Brooks
+Last Updated 10/6/2024, Laura Brooks
 PAGE DISPLAYS - weight and date text fields and button to add
 
 UPDATES INCLUDE:
@@ -38,12 +38,12 @@ UPDATES INCLUDE:
 2) Added the special back button to go back to the home page
 3) Updated the header so it only displays the title and settings button
 4) Adjusted manifest file to ensure all pages have an intended direction
+5) Corrected the EXTRA_PROFILE_ID to use the correct bundle and get the user ID
 TODO Items line 192,205
  */
 public class AddDailyWeight extends AppCompatActivity {
 
-    public static final String EXTRA_WEIGHT_ID = "com.zybooks.studyhelper.weights_Wid";
-    public static final String EXTRA_PROFILE_ID = "com.zybooks.studyhelper.register_id";
+    public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private EditText mWeightAmt;
@@ -51,9 +51,7 @@ public class AddDailyWeight extends AppCompatActivity {
     private Button addDailyWeight;
 
     private int mRId; //create variable to store user profile ID
-    private int mWId;
 
-    private RegisterDao registerDao;
     private WeightsDao weightsDao;
 
 
@@ -81,7 +79,7 @@ public class AddDailyWeight extends AppCompatActivity {
         weightsDao = InitDb.appDatabase.weightsDao();
 
 
-        // Set onClickListener for the login button
+        // Set onClickListener for the SAVE WEIGHT button
         addDailyWeight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,10 +108,12 @@ public class AddDailyWeight extends AppCompatActivity {
         return null;
     }
 
+    /*
     public void addWeightButtonClick(){
+
         insertWeight();
     }
-
+    */
     private void insertWeight() {
 
         // TODO: check for existing profile before inserting new record

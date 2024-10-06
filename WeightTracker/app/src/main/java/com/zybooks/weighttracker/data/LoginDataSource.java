@@ -5,6 +5,7 @@ import com.zybooks.weighttracker.data.model.LoggedInUser;
 import java.io.IOException;
 
 /**
+ * PLACEHOLDER
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
 public class LoginDataSource {
@@ -26,4 +27,5 @@ public class LoginDataSource {
     public void logout() {
         // TODO: revoke authentication
     }
+
 }

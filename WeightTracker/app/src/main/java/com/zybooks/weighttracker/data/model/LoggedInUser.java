@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * * PLACEHOLDER
  * Data class that captures user information for logged in users retrieved from LoginRepository
  */
 public class LoggedInUser {

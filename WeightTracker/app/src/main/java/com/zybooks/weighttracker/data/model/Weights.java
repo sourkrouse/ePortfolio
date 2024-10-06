@@ -10,7 +10,18 @@ import androidx.room.TypeConverters;
 import com.zybooks.weighttracker.data.DbConfig;
 
 import java.util.Date;
+/*
+Last Updated 10/6/2024, Laura Brooks
+This file is a data model for the weight_table.
+Data Fields include:
+Rid = foreign key that matches the user ID from the registration table.
+Wid  = unique id, auto generated to be used for deleting or editing a single row.
+updated = date entered by the user
+weight = decimal amount of weight entered
+record_date = last updated date.
 
+
+ */
 @Entity(tableName = DbConfig.WEIGHTS_TABLE,
         foreignKeys = @ForeignKey(entity = Register.class,
                 parentColumns = "id",

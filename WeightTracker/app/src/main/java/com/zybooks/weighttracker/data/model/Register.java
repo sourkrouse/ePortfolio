@@ -6,7 +6,20 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.zybooks.weighttracker.data.DbConfig;
+/*
+Last Updated 10/6/2024, Laura Brooks
+This file is a data model for the registration_table.
+Data Fields include:
+id = primary and auto-generated,unique id representing the user ID
+updated = date auto generated as last updated date
+firstname = string, accepts entry from the user
+lastname = string, accepts entry from the user
+email = string, accepts entry from the user
+username = string, accepts entry from the user
+password = string, accepts entry from the user (adding hashing)
 
+
+ */
 // TODO - may need to add a phone number column later
 @Entity(tableName = DbConfig.REGISTER_TABLE)
 public class Register {

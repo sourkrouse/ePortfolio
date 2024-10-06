@@ -12,6 +12,12 @@ import com.zybooks.weighttracker.data.model.Register;
 
 import java.util.List;
 
+/*
+Last Updated 10/6/2024, Laura Brooks
+This file is a database access object that sets the queries used to run against the database.
+
+
+ */
 
 @Dao
 public interface RegisterDao {

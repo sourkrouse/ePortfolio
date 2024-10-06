@@ -10,6 +10,11 @@ import com.zybooks.weighttracker.data.model.Register;
 
 import java.util.List;
 
+/*
+PLACEHOLDER - this file will be deleted
+
+
+ */
 @Dao
 public interface UserDao {
 

@@ -1,4 +1,4 @@
-package com.zybooks.weighttracker;
+package com.zybooks.weighttracker.DailyWeights;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.zybooks.weighttracker.MyItemRecyclerViewAdapter;
+import com.zybooks.weighttracker.R;
 import com.zybooks.weighttracker.placeholder.PlaceholderContent;
 
 /**
@@ -54,7 +56,7 @@ public class DailyWeightFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_daily_weight_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_weight_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {

@@ -2,6 +2,9 @@ package com.zybooks.weighttracker;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,18 +16,23 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.zybooks.weighttracker.DailyWeights.WeightsViewAdapter;
+import com.zybooks.weighttracker.DailyWeights.WeightsViewModel;
+import com.zybooks.weighttracker.DailyWeights.WeightsViewModelFactory;
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
 import com.zybooks.weighttracker.data.DAO.WeightsDao;
 import com.zybooks.weighttracker.data.InitDb;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.model.Weights;
+import com.zybooks.weighttracker.ui.login.LoginViewModel;
+import com.zybooks.weighttracker.ui.login.LoginViewModelFactory;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /*
-Last Updated 9/18/2024, Laura Brooks
+Last Updated 10/6/2024, Laura Brooks
 Page Argument is a Bundle storing the user details. The user ID is then used
 to query the database for the user name.
 PAGE DISPLAYS - active users name at the top of the page. Placeholders for
@@ -49,6 +57,8 @@ public class WeightsActivity extends AppCompatActivity {
 
     private List<Weights> mWeightList;
     private int mRId;
+    private WeightsViewModel weightsViewModel;
+    private WeightsViewAdapter weightsViewAdapter;
 
 
     @Override
@@ -63,15 +73,29 @@ public class WeightsActivity extends AppCompatActivity {
         // Initialize the RegisterDao
         registerDao = InitDb.appDatabase.registerDao();
 
-        // get the display name with the passed user ID
-        getDisplayName(mRId);
+        // get the display name with the passed user ID, only if found
+
+        if (mRId != -1) {
+            getDisplayName(mRId);
+            getWeightList(mRId);
+        }
+
 
         // custom back arrow in the action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        // initializing the View Model where the main DB work is done
+        weightsViewModel = new ViewModelProvider(this, new WeightsViewModelFactory())
+               .get(WeightsViewModel.class);
 
+        //RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        //layoutManager.ori = LinearLayoutManager.VERTICAL;
+
+        //RecyclerView recyclerView = findViewById(R.id.list);
+        //recyclerView.layoutManager = layoutManager;
+        //recyclerView.setAdapter(weightsViewAdapter);
     /*
     private List<Register> loadWeights() {
         String order = mSharedPrefs.getString(SettingsFragment.PREFERENCE_SUBJECT_ORDER, "1");
@@ -84,6 +108,12 @@ public class WeightsActivity extends AppCompatActivity {
 
     }
     */
+
+    }
+
+    private void getWeightList(int userID){
+        Log.d("WEIGHTLIST",Integer.toString(userID));
+        mWeightList = weightsViewModel.pullList(userID);
 
     }
 
@@ -114,7 +144,7 @@ public class WeightsActivity extends AppCompatActivity {
                                 // set name field to display name at top
                                 String dFirst = register.getFirst();
                                 String dLast = register.getLast();
-                                Log.d("REGISTNAME",dFirst + ' ' + dLast);
+                                Log.d("REGISTNAME2",dFirst + ' ' + dLast);
                                 TextView textView = (TextView)findViewById(R.id.profile_name);
                                 textView.setText(dFirst + ' ' + dLast); //set text for text view
                                 //mNameField.setText(dFirst + ' ' + dLast);

@@ -5,7 +5,9 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.zybooks.weighttracker.data.DbConfig;
-
+/*
+PLACEHOLDER - will be deleted later
+ */
 @Entity(tableName = DbConfig.USER_TABLE)
 public class User {
     @PrimaryKey(autoGenerate = true)

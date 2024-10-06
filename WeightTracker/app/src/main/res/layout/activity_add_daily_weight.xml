@@ -44,7 +44,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp"
         android:text="@string/new_weight_save"
-        android:onClick="addWeightButtonClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

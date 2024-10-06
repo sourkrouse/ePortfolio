@@ -9,5 +9,6 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".DailyWeightFragment"
+    tools:context=".DailyWeights.DailyWeightFragment"
     tools:listitem="@layout/fragment_daily_weight" />
+
