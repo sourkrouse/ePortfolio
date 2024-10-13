@@ -24,29 +24,29 @@ Only the queries to insert a new weight and get a list of weights are being used
  */
 
 @Dao
-public interface WeightsDao {
+public abstract class WeightsDao {
 
-    //@Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Rid = :id")
-    //public Weights getWeight(int id);
+    @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Wid = :id")
+    public abstract Weights getWeight(int id);
 
     //@Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " ORDER BY Rid DESC")
     //public List<Weights> getWeights();
 
-    @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Rid = :id ORDER BY record_date DESC")
+    @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Rid = :id ORDER BY record_date DESC LIMIT :limit")
     //public LiveData<List<String>> getWeightsNewerFirst(int id);
-    public List<Weights> getWeightsNewerFirst(int id);
+    public abstract List<Weights> getWeightsNewerFirst(int id, int limit);
 
    // @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " ORDER BY record_date ASC")
     //public List<Weights> getWeightsOlderFirst();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public long insertWeight(Weights weights);
+    public abstract long insertWeight(Weights weights);
 
-    @Update
-    public void updateWeight(Weights weights);
+   // @Update
+    //public void updateWeight(Weights weights);
 
-    @Delete
-    public void deleteWeight(Weights weights);
+    @Query("DELETE FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Wid = :weightId")
+    public abstract void deleteByWeightId(int weightId);
 
 
 }

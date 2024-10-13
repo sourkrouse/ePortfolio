@@ -1,13 +1,41 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height"
-    android:layout_marginLeft="@dimen/text_margin"
-    android:layout_marginRight="@dimen/text_margin"
-    android:gravity="center_vertical">
+    android:layout_height="wrap_content"
+    android:weightSum="100"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
 
     <TextView
-        android:id="@+id/list"
-        android:layout_width="wrap_content"
+        android:id="@+id/weight_date"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/list_loading"/>
-</FrameLayout>
+        android:layout_weight="40"
+        android:text="@string/list_loading"
+        android:layout_gravity="center_vertical"
+        />
+    <TextView
+        android:id="@+id/weight_amt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="40"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:text=""
+        />
+    <ImageButton
+        android:id="@+id/delete_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:clickable="true"
+        android:layout_marginStart="100dp"
+        app:srcCompat="@drawable/delete" />
+
+</LinearLayout>

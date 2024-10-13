@@ -190,9 +190,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //loadingProgressBar.setVisibility(View.VISIBLE);
-                //loginViewModel.login(usernameEditText.getText().toString(),
-                 //       passwordEditText.getText().toString());
+
                 mRId = loginViewModel.login(usernameEditText.getText().toString(),passwordEditText.getText().toString());
                 if (mRId != -1)
                     weightsScreen(mRId);

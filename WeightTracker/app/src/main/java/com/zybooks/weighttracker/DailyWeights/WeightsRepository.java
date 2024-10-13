@@ -3,6 +3,9 @@ package com.zybooks.weighttracker.DailyWeights;
 import com.zybooks.weighttracker.data.LoginDataSource;
 import com.zybooks.weighttracker.data.Result;
 import com.zybooks.weighttracker.data.model.LoggedInUser;
+import com.zybooks.weighttracker.data.model.Weights;
+
+import java.util.List;
 
 /**
  * PLACEHOLDER
@@ -50,15 +53,17 @@ public class WeightsRepository {
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
     }
-/*
-    public Result<LoggedInUser> login(String username, String password) {
+
+    public List<Weights> seeList(int userID) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
+        List<Weights> result = dataSource.getWeights(userID);
+        /*
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
         }
+
+         */
         return result;
     }
 
- */
 }

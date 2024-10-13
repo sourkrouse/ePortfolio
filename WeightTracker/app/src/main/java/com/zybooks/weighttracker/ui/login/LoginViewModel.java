@@ -28,11 +28,10 @@ Completed items:
 public class LoginViewModel extends ViewModel {
 
     //private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
-    private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private RegisterDao registerDao;
-    private int currentUserID = -1;
+    private LoginRepository loginRepository;
+    private LoginResult loginResult;
+
 
 
     //LoginViewModel(LoginRepository loginRepository) {
@@ -57,18 +56,15 @@ public class LoginViewModel extends ViewModel {
  */
     // arguments are uname/pwd passed from front end, returns user ID to front end
     public int login(String username, String password) {
-        // can be launched in a separate asynchronous job
-        this.getUserID(username, password);
-        int result = currentUserID;
 
 
-        if (result != -1){
-            loginResult.setValue(new LoginResult(R.string.login_success));
-            return currentUserID;
+        if (username == null || password == null){
+            //loginResult.setValue(new LoginResult(R.string.login_success));
+            return -1;
 
         } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
-            return -1;
+            //loginResult.setValue(new LoginResult(R.string.login_failed));
+            return loginRepository.login(username, password);
         }
         /*
         if (result instanceof ResultList.Success) {
@@ -81,37 +77,7 @@ public class LoginViewModel extends ViewModel {
 
     }
 
-    // private method for database code to get the User ID value
-    private void getUserID(String usernameEditText, String passwordEditText){
-        registerDao = InitDb.appDatabase.registerDao();
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
 
-                String username = usernameEditText.trim();
-                String password = passwordEditText.trim();
-
-                // check if username exists before inserting a new record
-                if (registerDao.getProfileByUsername(username) != null) {
-                    // Insert the test user
-                    Register getUser = registerDao.getUser(username, password);
-                    if (getUser != null){
-                        currentUserID = getUser.mId;
-                    } else {
-                        currentUserID = -1;
-                    }
-
-                } else {
-
-                    //TODO: not working when trying to pull on same activity
-                    //errorDuplicateUser();
-                    currentUserID = -1;
-                }
-
-
-            }
-        });
-    }
 /*
     public void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {

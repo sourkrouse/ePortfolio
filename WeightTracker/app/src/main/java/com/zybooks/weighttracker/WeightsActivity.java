@@ -2,11 +2,13 @@ package com.zybooks.weighttracker;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.icu.lang.UCharacter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,16 +18,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.zybooks.weighttracker.DailyWeights.DeleteWeightActivity;
+import com.zybooks.weighttracker.DailyWeights.OnItemClickListener;
 import com.zybooks.weighttracker.DailyWeights.WeightsViewAdapter;
 import com.zybooks.weighttracker.DailyWeights.WeightsViewModel;
 import com.zybooks.weighttracker.DailyWeights.WeightsViewModelFactory;
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
-import com.zybooks.weighttracker.data.DAO.WeightsDao;
 import com.zybooks.weighttracker.data.InitDb;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.model.Weights;
-import com.zybooks.weighttracker.ui.login.LoginViewModel;
-import com.zybooks.weighttracker.ui.login.LoginViewModelFactory;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -48,7 +49,7 @@ add new weight screen.
 6) Started functions to get weights from user ID (in progress)
 7) TODO Items line 91,95,111,130
  */
-public class WeightsActivity extends AppCompatActivity {
+public class WeightsActivity extends AppCompatActivity implements OnItemClickListener {
 
     public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -59,6 +60,7 @@ public class WeightsActivity extends AppCompatActivity {
     private int mRId;
     private WeightsViewModel weightsViewModel;
     private WeightsViewAdapter weightsViewAdapter;
+    public static final String NEXT_SCREEN = "AddDailyWeight";
 
 
     @Override
@@ -75,10 +77,7 @@ public class WeightsActivity extends AppCompatActivity {
 
         // get the display name with the passed user ID, only if found
 
-        if (mRId != -1) {
-            getDisplayName(mRId);
-            getWeightList(mRId);
-        }
+
 
 
         // custom back arrow in the action bar
@@ -89,32 +88,82 @@ public class WeightsActivity extends AppCompatActivity {
         // initializing the View Model where the main DB work is done
         weightsViewModel = new ViewModelProvider(this, new WeightsViewModelFactory())
                .get(WeightsViewModel.class);
+        //weightsViewModel = new ViewModelProvider(this).get(WeightsViewModel.class);
 
-        //RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        //layoutManager.ori = LinearLayoutManager.VERTICAL;
-
-        //RecyclerView recyclerView = findViewById(R.id.list);
-        //recyclerView.layoutManager = layoutManager;
-        //recyclerView.setAdapter(weightsViewAdapter);
-    /*
-    private List<Register> loadWeights() {
-        String order = mSharedPrefs.getString(SettingsFragment.PREFERENCE_SUBJECT_ORDER, "1");
-        // TODO options will be how to order weights - desc, asc
-        switch (Integer.parseInt(order)) {
-            case 0: return mRegisterDb.weightDao().getWeights();
-            case 1: return mRegisterDb.weightDao.getWeightsNewerFirst();
-            default: return mRegisterDb.weightDao.getWeightsOlderFirst();
+        if (mRId != -1) {
+            getDisplayName(mRId);
+            getWeightList(mRId);
         }
 
-    }
-    */
+
+        // Lookup the recyclerview in activity_weights layout
+        RecyclerView listWeights = findViewById(R.id.weight_list);
+
+        // Create adapter passing in the sample user data
+        WeightsViewAdapter adapter = new WeightsViewAdapter(mWeightList, this);
+
+        // Attach the adapter to the recyclerview to populate items
+        listWeights.setAdapter(adapter);
+        // Set layout manager to position the items
+        listWeights.setLayoutManager(new LinearLayoutManager(this));
+
+        /*
+        if (savedInstanceState != null) {
+
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true);
+
+            WeightsListFragment fragment = new WeightsListFragment();
+            //savedInstanceState.putSerializable(EXTRA_PROFILE_ID, mRId);
+            transaction.add(R.id.weight_list, WeightsListFragment.class, savedInstanceState);
+            transaction.replace(R.id.weight_list, fragment);
+            transaction.commit();
+        }
+*/
+
+        // Applying OnClickListener to our Adapter
+        /*
+        adapter.setOnClickListener(new adapter.OnClickListener() {
+            @Override
+            public void onClick(int position, Weights model) {
+                Intent intent = new Intent(WeightsActivity.this, AddDailyWeight.class);
+                // Passing the data to the
+                // EmployeeDetails Activity
+                intent.putExtra(NEXT_SCREEN, model.getRId());
+                startActivity(intent);
+            }
+        });
+
+         */
+
+
+
 
     }
 
     private void getWeightList(int userID){
-        Log.d("WEIGHTLIST",Integer.toString(userID));
+
         mWeightList = weightsViewModel.pullList(userID);
 
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        //Weights objRow = view.get(position);
+        Intent intent = new Intent(view.getContext(), DeleteWeightActivity.class);
+        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, 6);
+        startActivity(intent);
+        setResult(RESULT_OK, intent);
+    }
+
+    @Override
+    public void onLongItemClick(View view, int position) {
+        //Weights objRow = view.get(position);
+        Intent intent = new Intent(view.getContext(), DeleteWeightActivity.class);
+        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, 6);
+        startActivity(intent);
+        setResult(RESULT_OK, intent);
     }
 
     private void getDisplayName(int userID){
