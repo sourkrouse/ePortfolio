@@ -1,5 +1,5 @@
 package com.zybooks.weighttracker.data;
-/*
+/**
 Last Updated 10/6/2024, Laura Brooks
 This file presets the name of the database and database table names.
 

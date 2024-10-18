@@ -1,15 +1,21 @@
 package com.zybooks.weighttracker.data;
 
+import android.content.Intent;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.zybooks.weighttracker.MainActivity;
 import com.zybooks.weighttracker.data.model.LoggedInUser;
-import com.zybooks.weighttracker.data.model.Register;
 
 /**
- * Class that requests authentication and user information from the remote data source and
+ * Last Updated 10/16/2024, by Laura Brooks
+ * Class that requests authentication and user information from the room database and
  * maintains an in-memory cache of login status and user credentials information.
  */
 public class LoginRepository {
 
     private static volatile LoginRepository instance;
+
 
     private LoginDataSource dataSource;
 
@@ -40,7 +46,8 @@ public class LoginRepository {
 
     public void logout() {
         user = null;
-        dataSource.logout();
+        dataSource = null;
+
     }
 
     private void setLoggedInUser(LoggedInUser user) {
@@ -51,13 +58,21 @@ public class LoginRepository {
 
     public int login(String username, String password) {
         // handle login
-        int result = dataSource.login(username, password);
+
+
+        int result = dataSource.run(username, password);
+        if(Integer.toString(result) != null){
+            return result;
+        }
+
+        return -1;
         /*
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
         }
 
          */
-        return result;
+        //return result;
     }
+
 }

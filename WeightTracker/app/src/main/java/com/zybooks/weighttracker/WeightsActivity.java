@@ -1,29 +1,28 @@
 package com.zybooks.weighttracker;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.icu.lang.UCharacter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zybooks.weighttracker.DailyWeights.DeleteWeightActivity;
 import com.zybooks.weighttracker.DailyWeights.OnItemClickListener;
 import com.zybooks.weighttracker.DailyWeights.WeightsViewAdapter;
-import com.zybooks.weighttracker.DailyWeights.WeightsViewModel;
-import com.zybooks.weighttracker.DailyWeights.WeightsViewModelFactory;
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
+import com.zybooks.weighttracker.data.DAO.WeightsDao;
 import com.zybooks.weighttracker.data.InitDb;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.model.Weights;
@@ -32,8 +31,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/*
-Last Updated 10/6/2024, Laura Brooks
+/**
+Last Updated 10/13/2024, Laura Brooks
 Page Argument is a Bundle storing the user details. The user ID is then used
 to query the database for the user name.
 PAGE DISPLAYS - active users name at the top of the page. Placeholders for
@@ -46,8 +45,13 @@ UPDATES INCLUDE:
 4) Adjusted manifest file to ensure all pages have an intended direction
 5) Add new weight floating button at the bottom of the screen that connects to
 add new weight screen.
-6) Started functions to get weights from user ID (in progress)
-7) TODO Items line 91,95,111,130
+6) Add Recycler View to get list of weights in the DB by user ID
+7) Add button clicks to delete button
+ 8) After checking for weights found, using an adapter page to display list of weights
+ (DailyWeights folder)
+ 9) Put name of user in the action bar
+ 10) Add button to change order of the list
+
  */
 public class WeightsActivity extends AppCompatActivity implements OnItemClickListener {
 
@@ -55,12 +59,12 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private RegisterDao registerDao;
-
+    private WeightsDao weightsDao;
     private List<Weights> mWeightList;
     private int mRId;
-    private WeightsViewModel weightsViewModel;
-    private WeightsViewAdapter weightsViewAdapter;
-    public static final String NEXT_SCREEN = "AddDailyWeight";
+    private int listOrder = 1;
+    private Button changeOrderButton;
+
 
 
     @Override
@@ -72,152 +76,167 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
         savedInstanceState = getIntent().getExtras();
         mRId = savedInstanceState.getInt(EXTRA_PROFILE_ID, -1);
 
-        // Initialize the RegisterDao
+        // Initialize the Database tables
         registerDao = InitDb.appDatabase.registerDao();
-
-        // get the display name with the passed user ID, only if found
-
-
-
+        weightsDao = InitDb.appDatabase.weightsDao();
 
         // custom back arrow in the action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // initializing the View Model where the main DB work is done
-        weightsViewModel = new ViewModelProvider(this, new WeightsViewModelFactory())
-               .get(WeightsViewModel.class);
-        //weightsViewModel = new ViewModelProvider(this).get(WeightsViewModel.class);
+        // get button ID to change order
+        changeOrderButton = findViewById(R.id.buttonChangeOrder);
 
+
+        // get the display name with the passed user ID, only if found
         if (mRId != -1) {
             getDisplayName(mRId);
-            getWeightList(mRId);
+            mWeightList = getWeightArr(mRId);
         }
 
-
-        // Lookup the recyclerview in activity_weights layout
-        RecyclerView listWeights = findViewById(R.id.weight_list);
-
-        // Create adapter passing in the sample user data
-        WeightsViewAdapter adapter = new WeightsViewAdapter(mWeightList, this);
-
-        // Attach the adapter to the recyclerview to populate items
-        listWeights.setAdapter(adapter);
-        // Set layout manager to position the items
-        listWeights.setLayoutManager(new LinearLayoutManager(this));
-
-        /*
-        if (savedInstanceState != null) {
-
-
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true);
-
-            WeightsListFragment fragment = new WeightsListFragment();
-            //savedInstanceState.putSerializable(EXTRA_PROFILE_ID, mRId);
-            transaction.add(R.id.weight_list, WeightsListFragment.class, savedInstanceState);
-            transaction.replace(R.id.weight_list, fragment);
-            transaction.commit();
-        }
-*/
-
-        // Applying OnClickListener to our Adapter
-        /*
-        adapter.setOnClickListener(new adapter.OnClickListener() {
+        // on button click, reset the db query to a different order
+        changeOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(int position, Weights model) {
-                Intent intent = new Intent(WeightsActivity.this, AddDailyWeight.class);
-                // Passing the data to the
-                // EmployeeDetails Activity
-                intent.putExtra(NEXT_SCREEN, model.getRId());
-                startActivity(intent);
+            public void onClick(View v) {
+
+                if (listOrder == 1) {
+                    listOrder = 0;
+                } else {
+                    listOrder = 1;
+
+                }
+                mWeightList = getWeightArr(mRId);
             }
         });
 
-         */
-
-
-
 
     }
 
-    private void getWeightList(int userID){
-
-        mWeightList = weightsViewModel.pullList(userID);
-
-    }
-
+    // used in Weights Adapter file for the delete button
     @Override
-    public void onItemClick(View view, int position) {
-        //Weights objRow = view.get(position);
+    public void onItemClick(View view, int position, Weights objRow) {
+
+        Log.d("ON CLICK",Integer.toString(position));
         Intent intent = new Intent(view.getContext(), DeleteWeightActivity.class);
-        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, 6);
+        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, objRow.getWId());
         startActivity(intent);
         setResult(RESULT_OK, intent);
     }
 
+    // used in Weights Adapter file for the delete button
     @Override
-    public void onLongItemClick(View view, int position) {
-        //Weights objRow = view.get(position);
+    public void onLongItemClick(View view, int position, Weights objRow) {
+
         Intent intent = new Intent(view.getContext(), DeleteWeightActivity.class);
-        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, 6);
+        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, objRow.getWId());
         startActivity(intent);
         setResult(RESULT_OK, intent);
     }
 
+    // getter method for weight array from database, used in recycler adapter
+    public List<Weights> getWeightArr(@Nullable int userID){
+        getWeights(userID);
+        return mWeightList;
+    }
+
+    // run query against databse to get the weight list
+    private void getWeights(@Nullable int userID) {
+
+            // Execute the database query on a background thread
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    List<Weights> getList;
+                    // change query based on button click
+                    if (listOrder == 1) {
+                        getList = weightsDao.getWeightsNewerFirst(userID, 5);
+                    } else {
+                        getList = weightsDao.getWeightsOlderFirst(userID, 5);
+                    }
+
+                    Log.d("WEIGHTLIST","weightsfound");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (getList != null) {
+                                // userID is not null
+
+                                mWeightList = getList;
+                                // Lookup the recyclerview in activity_weights layout
+                                RecyclerView listWeights = findViewById(R.id.weight_list);
+
+                                // Create adapter passing in the sample user data
+                                WeightsViewAdapter adapter = new WeightsViewAdapter(mWeightList, WeightsActivity.this);
+
+                                // Attach the adapter to the recyclerview to populate items
+                                listWeights.setAdapter(adapter);
+                                // Set layout manager to position the items
+                                listWeights.setLayoutManager(new LinearLayoutManager(WeightsActivity.this));
+                            } else {
+                                // not found
+                                mWeightList = null;
+                                Log.d("WEIGHTERROR","NULL USER");
+
+                            }
+                        }
+                    });
+
+
+
+
+                }
+            });
+
+
+    }
+
+    // getting name of user from Register table using user ID
     private void getDisplayName(int userID){
         // Execute the database query on a background thread
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 final Register register = registerDao.getProfile(userID);
-                //final List<Weights> weights = weightsDao.getWeightsNewerFirst(mRId);
                 Log.d("REGISTNAME",register.getFirst());
                 // Handle the result on the main thread
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (register != null) {
-                            // TODO: need password check -  && password.equals(register.getPassword())
-
-                            // Successful login, navigate to the main activity
-                            if (userID == -1) {
-                                // TODO - setting the register ID to an existing ID for testing.
-                                TextView textView = (TextView)findViewById(R.id.profile_name);
-                                textView.setText("NAME NOTE FOUND!"); //set text for text view
-
-
-                            } else {
 
                                 // set name field to display name at top
                                 String dFirst = register.getFirst();
                                 String dLast = register.getLast();
-                                Log.d("REGISTNAME2",dFirst + ' ' + dLast);
-                                TextView textView = (TextView)findViewById(R.id.profile_name);
-                                textView.setText(dFirst + ' ' + dLast); //set text for text view
-                                //mNameField.setText(dFirst + ' ' + dLast);
+                                Log.d("REGISTNAME2", dFirst + ' ' + dLast);
+                                // set name in the action bar
+                                setActionBarTitle(dFirst + ' ' + dLast);
 
-                                //TODO - for action bar, trying to add name to action bar
-                                //actionBar.setTitle(dFirst + ' ' + dLast);
+
+                            } else {
+                                // Invalid login credentials
+                                Log.d("LOGINERROR", "Invalid Login");
+                                Toast.makeText(getApplicationContext(), "Invalid login credentials", Toast.LENGTH_LONG).show();
 
                             }
-                            //finish();
-                        } else {
-                            // Invalid login credentials
-                            Log.d("LOGINERROR","Invalid Login");
-                            //Toast.makeText(LoginActivity.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
                         }
-                    }
                 });
             }
         });
     }
 
+    // setting name in the action bar
+    public void setActionBarTitle(String title){
+        getSupportActionBar().setTitle(title);
+    }
+
+    // getter method for button click
     public void addWeightClick(View view){
         newWeightScreen();
     }
 
+    // goes to Add New Weight screen
     private void newWeightScreen() {
 
         Intent intent = new Intent(WeightsActivity.this, AddDailyWeight.class);
@@ -226,6 +245,7 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
         setResult(RESULT_OK, intent);
     }
 
+    // options menu setup
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.weights_menu, menu);
@@ -241,6 +261,7 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
         return true;
     }
 
+    // switch statement runs functions of menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection

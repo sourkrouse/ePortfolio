@@ -4,8 +4,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.content.Intent;
 import android.util.Patterns;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.zybooks.weighttracker.WeightsActivity;
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
 import com.zybooks.weighttracker.data.InitDb;
 import com.zybooks.weighttracker.data.LoginRepository;
@@ -38,6 +42,7 @@ public class LoginViewModel extends ViewModel {
     LoginViewModel(LoginRepository loginRepository) {
         // Initialize the RegisterDao
         registerDao = InitDb.appDatabase.registerDao();
+
         //OR use local cache
         this.loginRepository = loginRepository;
 
@@ -55,7 +60,7 @@ public class LoginViewModel extends ViewModel {
 
  */
     // arguments are uname/pwd passed from front end, returns user ID to front end
-    public int login(String username, String password) {
+    public int login(View view, String username, String password) {
 
 
         if (username == null || password == null){
@@ -76,7 +81,9 @@ public class LoginViewModel extends ViewModel {
         */
 
     }
-
+    public void logout(){
+            loginRepository.logout();
+    }
 
 /*
     public void loginDataChanged(String username, String password) {

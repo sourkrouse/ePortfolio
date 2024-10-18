@@ -33,11 +33,10 @@ public abstract class WeightsDao {
     //public List<Weights> getWeights();
 
     @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Rid = :id ORDER BY record_date DESC LIMIT :limit")
-    //public LiveData<List<String>> getWeightsNewerFirst(int id);
     public abstract List<Weights> getWeightsNewerFirst(int id, int limit);
 
-   // @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " ORDER BY record_date ASC")
-    //public List<Weights> getWeightsOlderFirst();
+    @Query("SELECT * FROM " + DbConfig.WEIGHTS_TABLE+ " WHERE Rid = :id ORDER BY record_date ASC LIMIT :limit")
+    public abstract List<Weights> getWeightsOlderFirst(int id, int limit);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long insertWeight(Weights weights);

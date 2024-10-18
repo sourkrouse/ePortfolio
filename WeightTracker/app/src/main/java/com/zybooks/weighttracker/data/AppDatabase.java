@@ -14,7 +14,7 @@ import com.zybooks.weighttracker.data.DAO.WeightsDao;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.model.Weights;
 
-/*
+/**
 Last Updated 10/6/2024, Laura Brooks
 This file sets up the database using the RoomDatabase class.
 Version number is 2 after making an update to add the additional DAO references.
@@ -24,7 +24,7 @@ There is code to run a migration when updates to the database schema are made.
  */
 @Database(entities = {Register.class, Weights.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
-    public abstract UserDao userDao();
+    public abstract UserDao userDao(); // placeholder
     public abstract RegisterDao registerDao();
     public abstract WeightsDao weightsDao();
 

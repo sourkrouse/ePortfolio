@@ -39,24 +39,13 @@ public class WeightsRepository {
         return instance;
     }
 
-    public boolean isLoggedIn() {
-        return user != null;
-    }
 
-    public void logout() {
-        user = null;
-        dataSource.logout();
-    }
 
-    private void setLoggedInUser(LoggedInUser user) {
-        this.user = user;
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
-    }
+
 
     public List<Weights> seeList(int userID) {
         // handle login
-        List<Weights> result = dataSource.getWeights(userID);
+        List<Weights> result = dataSource.getWeightArr(userID);
         /*
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());

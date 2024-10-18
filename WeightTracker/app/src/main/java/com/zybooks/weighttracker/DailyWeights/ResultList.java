@@ -1,5 +1,10 @@
 package com.zybooks.weighttracker.DailyWeights;
 
+/**
+ * NOTE: This page is not currently used in the project, however, it is left as a placeholder for future enhancements.
+ * Last updated 10/16/2024, by Laura Brooks.
+ * @param <T>
+ */
 public class ResultList<T> {
     // hide the private constructor to limit subclass types (Success, Error)
     private ResultList() {

@@ -10,8 +10,8 @@ import com.zybooks.weighttracker.data.model.Register;
 
 import java.util.List;
 
-/*
-PLACEHOLDER - this file will be deleted
+/**
+PLACEHOLDER - this file will be used if I plan to separate the user info and password/username info
 
 
  */

@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /*
 Last Updated 10/6/2024, Laura Brooks
-PLACEHOLDER - using the ui.login package for login activity
+Used in RegisterActivity file when inserting a new record. Checking database constraints.
 
 
  */

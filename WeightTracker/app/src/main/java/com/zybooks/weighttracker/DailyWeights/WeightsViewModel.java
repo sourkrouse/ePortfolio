@@ -24,31 +24,27 @@ This screen is a view model which runs in the background of the main activity.
 FUNCTIONS INCLUDE - taking the user ID and running a query in the database to pull a list
 of weights based on the user ID. Returns a list object back to the main thread..
 
-
+NOTE-- *** NOT CURRENTLY USED ***
+saved as a placeholder for view model example
  */
 public class WeightsViewModel extends ViewModel {
 
 
     private WeightsRepository weightRepository;
     private WeightsDao weightsDao;
-    //private WeightsViewModel wvm;
 
-    WeightsViewModel(){
-        weightsDao = InitDb.appDatabase.weightsDao();
-    }
-    // set and initialize the database connection to the weights table
 
     WeightsViewModel(WeightsRepository weightRepository) {
         // Initialize the Weights Database
         weightsDao = InitDb.appDatabase.weightsDao();
+        //OR using cache (placeholder for other methods)
         this.weightRepository = weightRepository;
 
     }
 
     // function runs from the main thread and returns the list of weights
-
     public List<Weights> pullList(@Nullable int userID) {
-        // can be launched in a separate asynchronous job
+        // return a list of weights by user ID
         if (userID == -1){
             return null;
         } else {

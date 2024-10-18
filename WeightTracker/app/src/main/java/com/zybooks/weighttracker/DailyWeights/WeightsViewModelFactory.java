@@ -13,7 +13,8 @@ Last Updated 10/6/2024, Laura Brooks
 This file is a factory file that works with the Weights View model to run the file in the background
 with the main activity.
 
-
+NOTE-- *** NOT CURRENTLY USED ***
+saved as a placeholder for view model example
  */
 public class WeightsViewModelFactory implements ViewModelProvider.Factory {
 

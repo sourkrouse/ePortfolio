@@ -7,10 +7,9 @@ import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,20 +17,22 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
+
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.InitDb;
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
+import com.zybooks.weighttracker.ui.login.RunOnThread;
 
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-/*
-Last Updated 9/18/2024, Laura Brooks
+/**
+Last Updated 10/17/2024, Laura Brooks
 PAGE DISPLAYS - first,last,email,username,password text fields
 and button to add new account
 
@@ -41,13 +42,13 @@ UPDATES INCLUDE:
 3) Added the special back button to go back to the home page
 4) Updated the header so it displays the title, back button, and settings button
 5) Adjusted manifest file to ensure all pages have an intended direction
-TODO Items line 62,192,205
+6) Added data check function to check for correct data to enter
+7) Using the RunOnThread object to check if username exists
  */
 
 public class RegisterActivity extends AppCompatActivity {
 
-    //public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
 
     private EditText mUserField;
@@ -56,11 +57,10 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mLastField;
     private EditText mEmailField;
     private Button mRegisterButton;
-    private TextView mSuccessText;
-    private int mCurrentProfileIndex;
     private RegisterDao registerDao;
     private boolean mDarkTheme;
     private SharedPreferences mSharedPrefs;
+    private int insertID;
 
 
     /*
@@ -82,13 +82,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // calling the action bar
+        // calling the action bar to customize the back button
         ActionBar actionBar = getSupportActionBar();
-
-        // Customize the back button
         actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
-
-        // showing the custom back button in action bar
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Initialize the RegisterDao
@@ -103,12 +99,25 @@ public class RegisterActivity extends AppCompatActivity {
         mRegisterButton = findViewById(R.id.buttonRegisterSubmit);
 
 
-        // Set onClickListener for the login button
+        // Set onClickListener for the Create Account button
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertUser();
-                submitNewRegisterButtonClick();
+                if(!checkDataFields()){
+                    // checking the data fields first on each
+                    errorDuplicateUser();
+
+                } else {
+                    // if fields are checked, move to insert
+                    insertUser();
+                    if (insertID != -1){
+
+                        submitNewRegisterButtonClick();
+
+                    }
+                }
+
+
             }
         });
 
@@ -117,6 +126,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
+
+    // resets background preference if changed
     @Override
     protected void onResume() {
         super.onResume();
@@ -127,61 +138,30 @@ public class RegisterActivity extends AppCompatActivity {
             recreate();
         }
 
-        // Load subjects here in case settings changed
-        // TODO Loading of profiles or goal/start weights
-        //mSubjectAdapter = new SubjectAdapter(loadSubjects());
-        //mRecyclerView.setAdapter(mSubjectAdapter);
+
     }
 
 
-
+    // runs the functions that moves to the next page
     public void submitNewRegisterButtonClick(){
 
-        String username = mUserField.getText().toString().trim();
-        String password = mPwdField.getText().toString().trim();
-
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Please enter login credentials", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-
-        // Execute the database query on a background thread
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                final Register register = registerDao.getProfileByUsername(username);
-                Log.d("REGISTNAME",username);
-                // Handle the result on the main thread
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (register != null) {
-                            // TODO: need password check -  && password.equals(register.getPassword())
-
-                            // Successful login, navigate to the main activity
-                            mCurrentProfileIndex = register.getId();
-                            goToDailyWeights(mCurrentProfileIndex);
-                            finish();
-                        } else {
-                            // Invalid login credentials
-                            Log.d("LOGINERROR","Invalid Login");
-                            Toast.makeText(RegisterActivity.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
+        goToDailyWeights(insertID);
+        finish();
 
 
     }
 
+    // database function to insert new user to register database
+    // gets the data from the entry fields on the screen to insert
+    // data checks are run before this function to check data accuracy
+    // uses a Callable function to return the Integer value of the new user ID
+    // try/catch will get exception if database function fails
     private void insertUser() {
 
-        // TODO: check for existing profile before inserting new record
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
+        // insert record and get new ID
+
+        Future<Integer> result = executorService.submit(new Callable<Integer>() {
+            public Integer call() throws Exception {
 
                 String username = mUserField.getText().toString().trim();
                 String password = mPwdField.getText().toString().trim();
@@ -189,20 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String lastname = mLastField.getText().toString().trim();
                 String email_txt = mEmailField.getText().toString().trim();
 
-
-                if(!AuthenticateUser.checkStringLength(username,25)
-                        && !AuthenticateUser.checkStringLength(firstname,50)
-                        && !AuthenticateUser.checkStringLength(lastname,50)
-                        && !AuthenticateUser.checkEmail(email_txt)
-                        && !AuthenticateUser.checkPassword(password)
-                ){
-                    //TODO: add message when credentials fail
-                    errorDuplicateUser();
-                }
-
-                // check if username exists before inserting a new record
-                if (registerDao.getProfileByUsername(username) == null) {
-                    // Insert the test user
+                    // Insert the new user
                     Register registerUser = new Register();
                     registerUser.setUser(username);
                     registerUser.setPassword(password);  // TODO: Secure, passwords should be hashed
@@ -210,60 +177,93 @@ public class RegisterActivity extends AppCompatActivity {
                     registerUser.setLast(lastname);
                     registerUser.setEmail(email_txt);
 
-                    registerDao.insertProfile(registerUser);
+                    int newID = (int) registerDao.insertProfile(registerUser);
+
+                if (newID > 0) {
+                    return newID; // pass
                 } else {
-
-                    //TODO: not working when trying to pull on same activity
-                    errorDuplicateUser();
+                    return -1; //fail
                 }
-
-                // Check if the test user 'admin' already exists in the db
-                /*
-                if (registerDao.getProfileByUsername("admin") == null) {
-                    // Insert the test user
-                    Register testUser = new Register();
-                    testUser.setUser("admin");
-                    testUser.setPassword("admin");  // Note: In a real application, passwords should be hashed
-                    testUser.setFirst("Laura");
-                    testUser.setLast("Brooks");
-                    testUser.setEmail("admin@example.com");
-
-                    registerDao.insertProfile(testUser);
-                }
-                */
 
             }
         });
+        // try/catch to get the result from the Future object or the exception
+        try {
+            insertID = result.get();
+        } catch (Exception e) {
+            // failed
+            insertID = -1;
+        }
+        executorService.shutdown(); // shutdown executor once complete
     }
+
+    // using authenticateUser class to check data accuracy
+    // also calling function to check duplicate users
+    private boolean checkDataFields(){
+        String username = mUserField.getText().toString().trim();
+        String password = mPwdField.getText().toString().trim();
+        String firstname = mFirstField.getText().toString().trim();
+        String lastname = mLastField.getText().toString().trim();
+        String email_txt = mEmailField.getText().toString().trim();
+
+        if(checkDuplicateUser(username,password) != -1){
+            return false;
+        }
+        // testing entered data for database criteria before inserting record
+        if(!AuthenticateUser.checkStringLength(username,25)
+                && !AuthenticateUser.checkStringLength(firstname,50)
+                && !AuthenticateUser.checkStringLength(lastname,50)
+                && !AuthenticateUser.checkEmail(email_txt)
+                && !AuthenticateUser.checkPassword(password)
+        ){
+
+            return false;
+        }
+
+        return true; // iff all checks pass
+    }
+
+    // calling function in data check
+    // creates object from RunOnThread to check if user exists
+    public int checkDuplicateUser(String username, String password) {
+
+        RunOnThread future =  new RunOnThread(username, password) ;
+        int userID = future.getUser();
+        //System.gc(); // ensure object is destroyed
+        return userID;
+
+    }
+
+    // function to move to next screen, Weight Progress
     private void goToDailyWeights(int newID){
 
-
-        //Log.d("IDTAG",String.valueOf(mProfile.getId()));
-        //Log.d("NAMETAG",String.valueOf(mProfile.getLast()));
         Intent intent = new Intent(RegisterActivity.this, WeightsActivity.class);
         intent.putExtra(WeightsActivity.EXTRA_PROFILE_ID, newID);
         startActivity(intent);
         setResult(RESULT_OK, intent);
     }
+
+    // error message when data entered is not accurate
     public void errorDuplicateUser(){
-        //Toast.makeText(this, "This username already exists", Toast.LENGTH_SHORT).show();
 
-       // InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        //imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
-        Snackbar snackbar = Snackbar
-                .make(findViewById(android.R.id.content), "Incorrect!!", Snackbar.LENGTH_LONG)
-                .setAction("RETRY", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                    }
-                });
-        snackbar.setActionTextColor(Color.RED);
+        runOnUiThread(new Runnable() {
+            public void run() {
 
-        snackbar.show();
+                LayoutInflater myInflater = LayoutInflater.from(getApplicationContext());
+                View view = myInflater.inflate(R.layout.error_duplicate_user, null);
+                Toast myToast = new Toast(view.getContext());
+                myToast.setView(view);
+                myToast.setDuration(Toast.LENGTH_LONG);
+                myToast.setGravity(Gravity.TOP|Gravity.LEFT, 0, 0);
+                myToast.show();
+            }
+        });
+        return;
 
 
     }
 
+    // options menu, this is working but not useful because there is no other screens to navigate to
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.spinner_menu, menu);
@@ -282,7 +282,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-
+    // switch statement for option menu
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle item selection

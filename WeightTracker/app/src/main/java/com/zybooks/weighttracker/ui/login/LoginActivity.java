@@ -1,52 +1,34 @@
 package com.zybooks.weighttracker.ui.login;
 
-import android.app.Activity;
-
 import androidx.appcompat.app.ActionBar;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.zybooks.weighttracker.AuthenticateUser;
-import com.zybooks.weighttracker.DailyWeights.WeightsViewModel;
 import com.zybooks.weighttracker.MainActivity;
 import com.zybooks.weighttracker.R;
 import com.zybooks.weighttracker.SMSActivity;
 import com.zybooks.weighttracker.SettingsActivity;
 import com.zybooks.weighttracker.SettingsFragment;
-import com.zybooks.weighttracker.data.DAO.RegisterDao;
-import com.zybooks.weighttracker.data.InitDb;
-import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.RegisterActivity;
 import com.zybooks.weighttracker.WeightAndSeeDatabase;
 import com.zybooks.weighttracker.WeightsActivity;
 import com.zybooks.weighttracker.databinding.ActivityLoginBinding;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 /*
 Last Updated 10/6/2024, Laura Brooks
 PAGE DISPLAYS - username/password text fields and button to login
@@ -70,9 +52,10 @@ public class LoginActivity extends AppCompatActivity {
     //private Register mRegister;
 
     private int mRId = -1;
-
+    private EditText mUserField;
+    private EditText mPwdField;
+    private Button loginButton;
     private LoginViewModel loginViewModel;
-    private WeightsViewModel weightsViewModel;
     private ActivityLoginBinding binding;
     private boolean mDarkTheme;
     private SharedPreferences mSharedPrefs;
@@ -96,20 +79,16 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // initializing the View Model where there main DB work is done
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
-
+        loginButton = findViewById(R.id.login);
 
         savedInstanceState = getIntent().getExtras();
         // Get profile ID from argument passed
         if (savedInstanceState != null)
             mRId = savedInstanceState.getInt(EXTRA_PROFILE_ID, -1);
 
-        // get user entry from input fields - replace binding.username
-        final EditText usernameEditText = findViewById(R.id.username);
-        final EditText passwordEditText = findViewById(R.id.password);
-        final Button loginButton = findViewById(R.id.login);
+        // initializing the View Model where the main DB work is done
+        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
+                .get(LoginViewModel.class);
 
         //final ProgressBar loadingProgressBar = binding.loading;
 
@@ -190,10 +169,21 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // get user entry from input fields - replace binding.username
+                mUserField = findViewById(R.id.username);
+                mPwdField = findViewById(R.id.password);
+                String usernameEditText = mUserField.getText().toString().trim();
+                String passwordEditText = mPwdField.getText().toString().trim();
 
-                mRId = loginViewModel.login(usernameEditText.getText().toString(),passwordEditText.getText().toString());
-                if (mRId != -1)
+
+                mRId = loginViewModel.login(v, usernameEditText,passwordEditText);
+                if (mRId != -1) {
                     weightsScreen(mRId);
+                } else {
+                    TextView textView = (TextView)findViewById(R.id.login_error_message);
+                    textView.setText("LOGIN NOT FOUND!"); //set text for login error message
+                }
+
              }
         });
     }
@@ -231,16 +221,16 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         setResult(RESULT_OK, intent);
 
-        //startActivity(new Intent(LoginActivity.this, WeightsActivity.class));
-        //finish();
+
     }
+
     // move to registration screen
     public void newRegisterButtonClick(View view){
         newRegister();
     }
 
     private void newRegister() {
-        //Intent intent = new Intent(this, RegisterActivity.class);
+
         startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         finish();
     }
@@ -274,6 +264,12 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case android.R.id.home:
+                intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                //finish(); // returns the user to parent page
+                return true;
+            case android.R.layout.simple_spinner_item:
+                loginViewModel.logout();
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 //finish(); // returns the user to parent page

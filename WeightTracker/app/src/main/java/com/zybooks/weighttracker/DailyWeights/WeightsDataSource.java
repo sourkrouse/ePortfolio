@@ -17,7 +17,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /*
-Last Updated 10/6/2024, Laura Brooks
+Last Updated 10/16/2024, Laura Brooks
+** This code was moved to the main activity for efficiency
 PLACEHOLDER - may be used to set the database connection
 
 
@@ -32,8 +33,12 @@ public class WeightsDataSource {
 
     public List<Weights> returnedList = new ArrayList<>();
 
+    public List<Weights> getWeightArr(@Nullable int userID){
+        getWeights(userID);
+        return returnedList;
+    }
 
-    public List<Weights> getWeights(@Nullable int userID) {
+    private void getWeights(@Nullable int userID) {
 
         try {
             // TODO: handle loggedInUser authentication
@@ -52,7 +57,7 @@ public class WeightsDataSource {
                         setWeightArr(getList);
                     } else {
                         // Invalid login credentials
-                        returnedList = null;
+                        setWeightArr(null);
                         Log.d("WEIGHTERROR","NULL USER");
                         //Toast.makeText(LoginActivity.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
                     }
@@ -61,15 +66,17 @@ public class WeightsDataSource {
 
                 }
             });
-            return returnedList;
+            //return returnedList;
             //return new ResultList.Success<>(weightRepository.seeList());
         } catch (Exception e) {
-            return null;
+            //return null;
+            setWeightArr(null);
             //return new ResultList.Error(new IOException("Error logging in", e));
         }
     }
 
-    private void setWeightArr(List<Weights> listVar){
+    private void setWeightArr(@Nullable List<Weights> listVar){
+
         returnedList = listVar;
 
     }
