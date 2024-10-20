@@ -21,6 +21,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="login_success">Login Successful!</string>
+    <string name="logout">Logout of Application</string>
     <string name="weights_title">"Current Weight List"</string>
     <string name="prompt_weight">"Enter Weight"</string>
     <string name="prompt_date">"Enter Date"</string>

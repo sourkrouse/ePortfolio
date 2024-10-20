@@ -17,6 +17,10 @@ import com.zybooks.weighttracker.data.model.Weights;
 
 import java.util.List;
 
+/**
+ * PLACEHOLDER - This file is not used in the project but stored as a potential
+ * workaround for the adapter file in the DailyWeights folder. 10/17/2024
+ */
 public class WeightsListFragment extends Fragment  {
 
     private static final String TAG = "WeightsListFragment";

@@ -29,7 +29,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/*
+/**
 Last Updated 10/6/2024, Laura Brooks
 PAGE DISPLAYS - weight and date text fields and button to add
 
@@ -39,7 +39,7 @@ UPDATES INCLUDE:
 3) Updated the header so it only displays the title and settings button
 4) Adjusted manifest file to ensure all pages have an intended direction
 5) Corrected the EXTRA_PROFILE_ID to use the correct bundle and get the user ID
-TODO Items line 192,205
+
  */
 public class AddDailyWeight extends AppCompatActivity {
 
@@ -65,6 +65,8 @@ public class AddDailyWeight extends AppCompatActivity {
     // Input type for weight should be a decimal
         mWeightAmt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
         addDailyWeight = findViewById(R.id.addDailyWeight);
+        // Input type for date
+        addDailyWeight.setInputType(InputType.TYPE_CLASS_DATETIME);
 
         // custom back arrow in the action bar
         ActionBar actionBar = getSupportActionBar();
@@ -108,22 +110,17 @@ public class AddDailyWeight extends AppCompatActivity {
         return null;
     }
 
-    /*
-    public void addWeightButtonClick(){
-
-        insertWeight();
-    }
-    */
+    // use executor function on separate thread to insert the data to the database
     private void insertWeight() {
 
-        // TODO: check for existing profile before inserting new record
+
         executorService.execute(new Runnable() {
             @Override
             public void run() {
 
                 Float weightAmt = Float.valueOf(mWeightAmt.getText().toString());
                 Date dateEntered = formatDate((mWeightDate.getText().toString()));
-
+                // TODO: need to add validation class for data integrity
 
                 // Insert new weight
                 if (weightAmt != null) {
@@ -135,8 +132,7 @@ public class AddDailyWeight extends AppCompatActivity {
                     weightsDao.insertWeight(addWeight);
                 } else {
 
-                    //TODO: not working when trying to pull on same activity
-                    //error();
+                    Log.d("WEIGHT-ENTERED",String.valueOf(Float.toString(weightAmt)));
                 }
 
 

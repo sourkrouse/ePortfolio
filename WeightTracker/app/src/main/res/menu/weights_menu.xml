@@ -16,5 +16,9 @@
         android:icon="@drawable/phone_icon"
         android:title="@string/pref_title_sms_approval"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/logout"
+        android:icon="@drawable/logout_24dp"
+        android:title="@string/logout"
+        app:showAsAction="ifRoom"/>
 
 </menu>

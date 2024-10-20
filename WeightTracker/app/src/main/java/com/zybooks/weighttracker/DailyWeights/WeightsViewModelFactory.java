@@ -8,7 +8,7 @@ import com.zybooks.weighttracker.DailyWeights.WeightsDataSource;
 import com.zybooks.weighttracker.DailyWeights.WeightsRepository;
 import com.zybooks.weighttracker.ui.login.LoginViewModel;
 
-/*
+/**
 Last Updated 10/6/2024, Laura Brooks
 This file is a factory file that works with the Weights View model to run the file in the background
 with the main activity.

@@ -3,6 +3,7 @@ package com.zybooks.weighttracker;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -24,8 +26,13 @@ import com.zybooks.weighttracker.DailyWeights.WeightsViewAdapter;
 import com.zybooks.weighttracker.data.DAO.RegisterDao;
 import com.zybooks.weighttracker.data.DAO.WeightsDao;
 import com.zybooks.weighttracker.data.InitDb;
+import com.zybooks.weighttracker.data.LoginRepository;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.model.Weights;
+import com.zybooks.weighttracker.ui.login.LoginActivity;
+import com.zybooks.weighttracker.ui.login.LoginViewModel;
+import com.zybooks.weighttracker.ui.login.LoginViewModelFactory;
+import com.zybooks.weighttracker.ui.login.RunOnThread;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -57,9 +64,11 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
 
     public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private LoginViewModel loginViewModel;
 
     private RegisterDao registerDao;
     private WeightsDao weightsDao;
+    private boolean deleteStatus;
     private List<Weights> mWeightList;
     private int mRId;
     private int listOrder = 1;
@@ -88,6 +97,9 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
         // get button ID to change order
         changeOrderButton = findViewById(R.id.buttonChangeOrder);
 
+        // initializing the View Model where the main DB work is done
+        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
+                .get(LoginViewModel.class);
 
         // get the display name with the passed user ID, only if found
         if (mRId != -1) {
@@ -118,20 +130,31 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
     public void onItemClick(View view, int position, Weights objRow) {
 
         Log.d("ON CLICK",Integer.toString(position));
-        Intent intent = new Intent(view.getContext(), DeleteWeightActivity.class);
-        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, objRow.getWId());
-        startActivity(intent);
-        setResult(RESULT_OK, intent);
+        DeleteWeightActivity deleteWeightActivity =  new DeleteWeightActivity(objRow.getWId()) ;
+        deleteStatus = deleteWeightActivity.getDeleteStatus();
+        TextView textViewDelete = (TextView)findViewById(R.id.delete_message);
+        if(deleteStatus){
+            textViewDelete.setText("DELETE SUCCESSFUL!");
+            mWeightList = getWeightArr(mRId);
+        } else {
+            textViewDelete.setText("DELETE ERROR!"); //message for user, delete error only
+        }
+
     }
 
     // used in Weights Adapter file for the delete button
     @Override
     public void onLongItemClick(View view, int position, Weights objRow) {
 
-        Intent intent = new Intent(view.getContext(), DeleteWeightActivity.class);
-        intent.putExtra(DeleteWeightActivity.SINGLE_WEIGHT_ID, objRow.getWId());
-        startActivity(intent);
-        setResult(RESULT_OK, intent);
+        DeleteWeightActivity deleteWeightActivity =  new DeleteWeightActivity(objRow.getWId()) ;
+        deleteStatus = deleteWeightActivity.getDeleteStatus();
+        TextView textViewDelete = (TextView)findViewById(R.id.delete_message);
+        if(deleteStatus){
+            textViewDelete.setText("DELETE SUCCESSFUL!");
+
+        } else {
+            textViewDelete.setText("DELETE ERROR!"); //message for user, delete error only
+        }
     }
 
     // getter method for weight array from database, used in recycler adapter
@@ -140,7 +163,7 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
         return mWeightList;
     }
 
-    // run query against databse to get the weight list
+    // run query against database to get the weight list
     private void getWeights(@Nullable int userID) {
 
             // Execute the database query on a background thread
@@ -274,6 +297,11 @@ public class WeightsActivity extends AppCompatActivity implements OnItemClickLis
             case R.id.settings:
                 intent = new Intent(WeightsActivity.this, SettingsActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.logout:
+                intent = new Intent(WeightsActivity.this, MainActivity.class);
+                startActivity(intent);
+
                 return true;
             case android.R.id.home:
                 //intent = new Intent(WeightsActivity.this, MainActivity.class);

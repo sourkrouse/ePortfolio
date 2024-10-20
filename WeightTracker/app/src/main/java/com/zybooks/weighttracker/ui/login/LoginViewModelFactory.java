@@ -8,6 +8,7 @@ import com.zybooks.weighttracker.data.LoginDataSource;
 import com.zybooks.weighttracker.data.LoginRepository;
 
 /**
+ * Last updated 10/12/2024 by Laura Brooks
  * ViewModel provider factory to instantiate LoginViewModel.
  * Required given LoginViewModel has a non-empty constructor
  */

@@ -13,6 +13,7 @@ import androidx.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,8 +30,8 @@ import com.zybooks.weighttracker.WeightAndSeeDatabase;
 import com.zybooks.weighttracker.WeightsActivity;
 import com.zybooks.weighttracker.databinding.ActivityLoginBinding;
 
-/*
-Last Updated 10/6/2024, Laura Brooks
+/**
+Last Updated 10/19/2024, Laura Brooks
 PAGE DISPLAYS - username/password text fields and button to login
 
 UPDATES INCLUDE:
@@ -38,18 +39,15 @@ UPDATES INCLUDE:
 2) Added the special back button to go back to the home page
 3) Updated the header so it only displays the title and settings button
 4) Adjusted manifest file to ensure all pages have an intended direction
-5) Started functions to get user ID from login entered
-6) Getting userID and password entered from user, running through DB code on
+5) OnResume resets the text fields so they cannot be seen if navigating back to the screen
+6) Getting username and password entered from user, running through DB code on
     view model, returning the user ID to the Weights Activity page
-7) ERROR - requires a double click on the button to enter
-** TODO Items line 192,205
+
+
  */
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String EXTRA_PROFILE_ID = "com.zybooks.studyhelper.register_id";
-
-    private WeightAndSeeDatabase mRegisterDb;
-    //private Register mRegister;
+    public static final String EXTRA_PROFILE_ID = "com.zybooks.weighttracker.register_id";
 
     private int mRId = -1;
     private EditText mUserField;
@@ -79,6 +77,8 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+        // set ID of login button to access from onClick
         loginButton = findViewById(R.id.login);
 
         savedInstanceState = getIntent().getExtras();
@@ -90,81 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        //final ProgressBar loadingProgressBar = binding.loading;
 
-        // running methods from view model to get state of the user entry
-/*
-        loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
-            @Override
-            public void onChanged(@Nullable LoginFormState loginFormState) {
-                if (loginFormState == null) {
-                    return;
-                }
-                loginButton.setEnabled(loginFormState.isDataValid());
-                if (loginFormState.getUsernameError() != null) {
-                    usernameEditText.setError(getString(loginFormState.getUsernameError()));
-                }
-                if (loginFormState.getPasswordError() != null) {
-                    passwordEditText.setError(getString(loginFormState.getPasswordError()));
-                }
-            }
-        });
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                }
-
-
-                updateUiWithUser(loginResult.getSuccess());
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                finish();
-            }
-        });
-*/
-
-/*
-        TextWatcher afterTextChangedListener = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                loginViewModel.loginDataChanged(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
-            }
-        };
-        usernameEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                }
-                return false;
-            }
-        });
-*/
         // on button click, get the userID of the logged in user, if found (using view model)
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,11 +101,12 @@ public class LoginActivity extends AppCompatActivity {
                 String usernameEditText = mUserField.getText().toString().trim();
                 String passwordEditText = mPwdField.getText().toString().trim();
 
-
-                mRId = loginViewModel.login(v, usernameEditText,passwordEditText);
+                // run login method from ViewModel class to get user ID from database
+                mRId = loginViewModel.login(usernameEditText,passwordEditText);
                 if (mRId != -1) {
                     weightsScreen(mRId);
                 } else {
+                    // show error
                     TextView textView = (TextView)findViewById(R.id.login_error_message);
                     textView.setText("LOGIN NOT FOUND!"); //set text for login error message
                 }
@@ -188,33 +115,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-/*
-    private void updateUiWithUser(LoggedInUserView model) {
-        //String welcome = getString(R.string.welcome) + model.getDisplayName();
-        String welcome = "Welcome!";
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-        //startActivity(new Intent(LoginActivity.this, WeightsActivity.class));
-        if (mRId != -1)
-            weightsScreen(mRId);
+
+    // removes any text from edit fields if user navigates back to the screen.
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        mUserField = findViewById(R.id.username);
+        mPwdField = findViewById(R.id.password);
+        mUserField.setText("");
+        mPwdField.setText("");
+
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
-    }
-*/
-    // button click action, sends user ID to next screen action
-    /*
-
-    public void loginButtonClick(View view){
-
-
-        weightsScreen(mRId);
-    }
-    */
-
-
-    // TODO login screen errors before going to the next screen
+    // called from onCreate/onClick, goes to the weight screen with the user ID
     private void weightsScreen(int userID) {
         Intent intent = new Intent(LoginActivity.this, WeightsActivity.class);
         intent.putExtra(WeightsActivity.EXTRA_PROFILE_ID, userID);
@@ -224,17 +138,19 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    // move to registration screen
+    // getter method to go to registration screen
     public void newRegisterButtonClick(View view){
         newRegister();
     }
 
+    // open registration screen
     private void newRegister() {
 
         startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         finish();
     }
 
+    // setup menu XML and options within
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.spinner_menu, menu);
@@ -250,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    // switch statement to run menu options
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -268,12 +185,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
                 //finish(); // returns the user to parent page
                 return true;
-            case android.R.layout.simple_spinner_item:
-                loginViewModel.logout();
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                //finish(); // returns the user to parent page
-                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

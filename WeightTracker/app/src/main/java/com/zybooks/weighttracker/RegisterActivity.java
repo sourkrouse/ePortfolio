@@ -50,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-
+    private AuthenticateUser authenticateUser;
     private EditText mUserField;
     private EditText mPwdField;
     private EditText mFirstField;
@@ -128,6 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // resets background preference if changed
+    // clear all fields so registration cannot be resubmitted when going back
     @Override
     protected void onResume() {
         super.onResume();
@@ -138,6 +139,16 @@ public class RegisterActivity extends AppCompatActivity {
             recreate();
         }
 
+        mUserField = findViewById(R.id.editTextUserName);
+        mPwdField = findViewById(R.id.editTextPassword);
+        mFirstField = findViewById(R.id.editTextFirstname);
+        mLastField = findViewById(R.id.editTextLastname);
+        mEmailField = findViewById(R.id.editTextEmailAddress);
+        mUserField.setText("");
+        mPwdField.setText("");
+        mFirstField.setText("");
+        mLastField.setText("");
+        mEmailField.setText("");
 
     }
 
@@ -210,11 +221,12 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
         // testing entered data for database criteria before inserting record
-        if(!AuthenticateUser.checkStringLength(username,25)
-                && !AuthenticateUser.checkStringLength(firstname,50)
-                && !AuthenticateUser.checkStringLength(lastname,50)
-                && !AuthenticateUser.checkEmail(email_txt)
-                && !AuthenticateUser.checkPassword(password)
+        authenticateUser = new AuthenticateUser();
+        if(!authenticateUser.checkStringLength(username,25)
+                && !authenticateUser.checkStringLength(firstname,50)
+                && !authenticateUser.checkStringLength(lastname,50)
+                && !authenticateUser.checkEmail(email_txt)
+                && !authenticateUser.checkPassword(password)
         ){
 
             return false;

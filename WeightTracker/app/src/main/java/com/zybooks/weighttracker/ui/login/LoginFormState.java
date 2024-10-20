@@ -3,6 +3,7 @@ package com.zybooks.weighttracker.ui.login;
 import androidx.annotation.Nullable;
 
 /**
+ *** NOT USED ***
  PLACEHOLDER - Data validation state of the login form.
  */
 class LoginFormState {

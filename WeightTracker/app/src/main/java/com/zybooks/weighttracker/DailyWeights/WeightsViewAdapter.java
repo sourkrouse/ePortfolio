@@ -16,7 +16,7 @@ import com.zybooks.weighttracker.data.model.Weights;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-/*
+/**
 Last Updated 10/16/2024, Laura Brooks
 This screen is a view adapter which runs in the background of the main activity.
 All data found will be placed in XML file titled - fragment_weight_list
@@ -31,6 +31,8 @@ public class WeightsViewAdapter extends RecyclerView.Adapter<WeightsViewAdapter.
     private OnItemClickListener mListener;
 
 
+    // ViewHolder represents a connection between each field object in the XML file
+    // and the adapter that will get the data to populate each row
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView amtTextView;
         private final TextView dateTextView;

@@ -13,7 +13,7 @@ package com.zybooks.weighttracker.data.DAO;
 
         import java.util.List;
 
-        /*
+        /**
 Last Updated 10/6/2024, Laura Brooks
 This file is a Database Access Object which sets all the queries used in the app to get
 data from the SQL Server.

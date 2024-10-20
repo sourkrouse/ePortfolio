@@ -4,7 +4,7 @@ import android.app.Application;
 
 /**
 Last Updated 10/6/2024, Laura Brooks
-This file runs the database called by the user.
+This file starts up the database called by the user.
 
 
  */

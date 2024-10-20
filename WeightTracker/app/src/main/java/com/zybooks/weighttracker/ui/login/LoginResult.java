@@ -3,6 +3,7 @@ package com.zybooks.weighttracker.ui.login;
 import androidx.annotation.Nullable;
 
 /**
+ * *** NOT USED *** no need to save a logged in status
  * Authentication result : success (user details) or error message.
  */
 class LoginResult {

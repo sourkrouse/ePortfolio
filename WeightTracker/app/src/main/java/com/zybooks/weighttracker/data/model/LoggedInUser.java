@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 /**
  * * PLACEHOLDER
  * Data class that captures user information for logged in users retrieved from LoginRepository
+ * This class would be used if the application plans to store the logged in user info in cache
  */
 public class LoggedInUser {
 

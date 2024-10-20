@@ -10,7 +10,10 @@ import com.zybooks.weighttracker.data.DAO.WeightsDao;
 import com.zybooks.weighttracker.data.model.Register;
 import com.zybooks.weighttracker.data.model.Weights;
 
-// TODO add Weights.class between brackets
+/**
+ * 10/17/2024 - original database creation file. This file was replaced by the
+ * AppDatabase file in the data folder.
+ */
 @Database(entities = {Register.class, Weights.class}, version = 1)
 public abstract class WeightAndSeeDatabase extends RoomDatabase {
 
