@@ -11,7 +11,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
-
+/**
+ * ORIGINAL CODE - this page was not enhanced
+ * This file creates a message is the SMS preference is checked.
+ */
 public class SMSActivity extends AppCompatActivity {
 
     // Initialize variable

@@ -6,11 +6,15 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+/**
+ * ORIGINAL CODE - this page was not enhanced
+ * This file is a fragment that works with the Setting Activity page to load some preferences.
+ */
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static String PREFERENCE_THEME = "pref_theme";
     public static String PREFERENCE_SMS = "pref_sms";
-    public static String PREFERENCE_WEIGHT_ORDER = "pref_weight_order";
+    //public static String PREFERENCE_WEIGHT_ORDER = "pref_weight_order";
     //public static String PREFERENCE_DEFAULT_QUESTION = "pref_default_question";
 
     @Override

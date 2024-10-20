@@ -9,7 +9,10 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.zybooks.weighttracker.data.model.Register;
-
+/**
+ * ORIGINAL CODE - this page was not enhanced
+ * This file is not working and is a placeholder only.
+ */
 public class RegisterEditActivity extends AppCompatActivity {
 
     public static final String EXTRA_PROFILE_ID = "com.zybooks.studyhelper.register_id";

@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-
+/**
+ * ORIGINAL CODE - this page was not enhanced
+ * This file will load some preferences from the settings fragment file.
+ */
 public class
 SettingsActivity extends AppCompatActivity {
 
