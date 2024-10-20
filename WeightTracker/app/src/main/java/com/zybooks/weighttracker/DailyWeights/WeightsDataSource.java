@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/*
+/**
 Last Updated 10/16/2024, Laura Brooks
 ** This code was moved to the main activity for efficiency
 PLACEHOLDER - may be used to set the database connection

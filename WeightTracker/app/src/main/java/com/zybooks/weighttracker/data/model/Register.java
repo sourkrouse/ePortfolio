@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.zybooks.weighttracker.data.DbConfig;
-/*
+/**
 Last Updated 10/6/2024, Laura Brooks
 This file is a data model for the registration_table.
 Data Fields include:

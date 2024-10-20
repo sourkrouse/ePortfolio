@@ -223,10 +223,10 @@ public class RegisterActivity extends AppCompatActivity {
         // testing entered data for database criteria before inserting record
         authenticateUser = new AuthenticateUser();
         if(!authenticateUser.checkStringLength(username,25)
-                && !authenticateUser.checkStringLength(firstname,50)
-                && !authenticateUser.checkStringLength(lastname,50)
-                && !authenticateUser.checkEmail(email_txt)
-                && !authenticateUser.checkPassword(password)
+                || !authenticateUser.checkStringLength(firstname,50)
+                || !authenticateUser.checkStringLength(lastname,50)
+                || !authenticateUser.checkEmail(email_txt)
+                || !authenticateUser.checkPassword(password)
         ){
 
             return false;
@@ -240,9 +240,8 @@ public class RegisterActivity extends AppCompatActivity {
     public int checkDuplicateUser(String username, String password) {
 
         RunOnThread future =  new RunOnThread(username, password) ;
-        int userID = future.getUser();
         //System.gc(); // ensure object is destroyed
-        return userID;
+        return future.getUser();
 
     }
 
@@ -256,6 +255,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // error message when data entered is not accurate
+    // NOTE: the error does not explain what happened. There was no time to add individual errors.
     public void errorDuplicateUser(){
 
         runOnUiThread(new Runnable() {

@@ -10,7 +10,7 @@ import androidx.room.TypeConverters;
 import com.zybooks.weighttracker.data.DbConfig;
 
 import java.util.Date;
-/*
+/**
 Last Updated 10/6/2024, Laura Brooks
 This file is a data model for the weight_table.
 Data Fields include:

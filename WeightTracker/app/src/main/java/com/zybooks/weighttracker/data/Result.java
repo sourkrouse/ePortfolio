@@ -1,6 +1,7 @@
 package com.zybooks.weighttracker.data;
 
 /**
+ * PLACEHOLDER - not currently being used in the project
  * A generic class that holds a result success w/ data or an error exception.
  */
 public class Result<T> {
